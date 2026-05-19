@@ -1,0 +1,567 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+#root {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+  /* Background diatur oleh index.html inline script (baca localStorage mf_last_role)
+     dan oleh container layout (.main-scroll, .admin-layout) masing-masing.
+     Jangan set di sini agar tidak menimpa inline style. */
+  min-height: 100vh;
+}
+
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #546E7A; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #083D56; }
+
+
+
+/* Auth background */
+.auth-bg {
+  background: linear-gradient(135deg, #083D56 0%, #0C5272 40%, #00695C 100%);
+  /* Fallback solid — warna mirip gradient start agar tidak flash saat render */
+  background-color: #083D56;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+.auth-bg::before {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: rgba(0, 105, 92, 0.15);
+  top: -100px; right: -100px;
+  animation: floatBlob 8s ease-in-out infinite;
+}
+.auth-bg::after {
+  content: '';
+  position: absolute;
+  width: 350px; height: 350px;
+  border-radius: 50%;
+  background: rgba(84, 110, 122, 0.12);
+  bottom: -80px; left: -80px;
+  animation: floatBlob 10s ease-in-out infinite reverse;
+}
+@keyframes floatBlob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(30px, -20px) scale(1.05); }
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: 16rem;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  /* Fallback background agar tidak transparan saat transisi */
+  background-color: #083D56;
+}
+.sidebar-overlay {
+  transition: opacity 0.3s ease;
+}
+.nav-item {
+  position: relative;
+  transition: all 0.2s ease;
+}
+.nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 3px; height: 0;
+  background: #00897B;
+  border-radius: 0 2px 2px 0;
+  transition: height 0.2s ease;
+}
+.nav-item.active::before { height: 60%; }
+.nav-item.active { background: rgba(0, 137, 123, 0.1); color: #00897B; }
+.nav-item:hover:not(.active) { background: rgba(255, 255, 255, 0.05); }
+
+/* Cards */
+.card-hover { transition: all 0.25s ease; }
+.card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(8, 61, 86, 0.1); }
+
+/* Pulse button */
+.btn-pulse { position: relative; }
+.btn-pulse::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  background: rgba(0, 105, 92, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+  z-index: -1;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50%       { opacity: 1; transform: scale(1.02); }
+}
+
+/* Toast */
+.toast-enter { animation: toastIn 0.4s ease-out; }
+.toast-exit  { animation: toastOut 0.3s ease-in forwards; }
+@keyframes toastIn  { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100%); } }
+
+/* Modal */
+.modal-backdrop { transition: opacity 0.25s ease; }
+.modal-content  { transition: all 0.25s ease; }
+
+/* Tab */
+.tab-btn { position: relative; transition: color 0.2s; }
+.tab-btn.active { color: #00695C; }
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 2px; background: #00695C; border-radius: 1px;
+}
+
+/* Progress */
+.progress-fill { transition: width 1s ease-out; }
+
+/* Input */
+.input-styled:focus {
+  border-color: #00695C;
+  box-shadow: 0 0 0 3px rgba(0, 105, 92, 0.15);
+}
+
+/* Modern Select */
+select.input-styled,
+select[class*="input-styled"] {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23546E7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  background-size: 16px 16px !important;
+  padding-right: 34px !important;
+  cursor: pointer;
+}
+select.input-styled:focus,
+select[class*="input-styled"]:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2300695C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+}
+
+/* Modern Date Input */
+input[type="date"].input-styled,
+input[type="date"][class*="input-styled"] {
+  cursor: pointer;
+  color-scheme: light;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23546E7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px 16px;
+  padding-right: 34px !important;
+}
+input[type="date"].input-styled:focus,
+input[type="date"][class*="input-styled"]:focus {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300695C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+}
+/* Remove browser's default calendar icon to avoid duplication with our custom one */
+input[type="date"].input-styled::-webkit-calendar-picker-indicator,
+input[type="date"][class*="input-styled"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  width: 24px;
+  cursor: pointer;
+}
+
+
+/* Modern show/hide password button */
+.btn-show-pass {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  color: #9E9E9E;
+  transition: all 0.18s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.btn-show-pass:hover {
+  color: #083D56;
+  background: rgba(8, 61, 86, 0.07);
+}
+
+
+/* Stat numbers */
+.stat-number { font-variant-numeric: tabular-nums; }
+
+/* Notif badge */
+.notif-badge { animation: badgePop 0.3s ease-out; }
+@keyframes badgePop { from { transform: scale(0); } to { transform: scale(1); } }
+
+/* Main scroll layout — User Dashboard */
+.main-scroll {
+  margin-left: 16rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Override body dark-background agar user area selalu terang */
+  background: #F5F5F5;
+}
+.content-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #F5F5F5;
+}
+/* Pastikan main di dalam content-scroll selalu punya background — mencegah blank saat transisi */
+.content-scroll > main {
+  background: #F5F5F5;
+  min-height: 100%;
+}
+
+/* Upload zone */
+.upload-zone {
+  border: 2px dashed #9E9E9E;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+.upload-zone:hover,
+.upload-zone.drag-over { border-color: #00695C; background: rgba(0, 105, 92, 0.04); }
+.upload-zone.has-file  { border-color: #00695C; border-style: solid; background: rgba(0, 105, 92, 0.04); }
+
+/* Agenda item */
+.agenda-item { transition: all 0.2s ease; }
+.agenda-item:hover .agenda-actions { opacity: 1; }
+.agenda-actions { opacity: 0; transition: opacity 0.2s; }
+
+/* Profile photo */
+.profile-photo-wrap {
+  position: relative;
+  width: 120px; height: 120px;
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.profile-photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.profile-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 61, 86, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.profile-photo-wrap:hover .profile-photo-overlay { opacity: 1; }
+
+.profile-photo-sm {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.profile-photo-sm img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Progress row */
+.prog-row { transition: background 0.15s; }
+.prog-row:hover { background: rgba(0, 0, 0, 0.02); }
+
+/* Filter buttons */
+.filter-btn { transition: all 0.15s ease; }
+.filter-btn.active-time { background: #083D56; color: #fff; }
+.filter-btn.active-type { background: #00695C; color: #fff; }
+
+/* Percentage bar */
+.pct-bar-track { height: 10px; border-radius: 5px; background: #ECEFF1; overflow: hidden; }
+.pct-bar-fill  { height: 100%; border-radius: 5px; transition: width 0.8s ease-out; }
+
+/* OTP */
+.otp-digit { width: 2.75rem; height: 3.25rem; }
+
+/* Org card */
+.org-card-clickable { cursor: pointer; transition: all 0.2s ease; }
+.org-card-clickable:hover { background: rgba(255, 255, 255, 0.15); }
+
+/* Member */
+.member-avatar {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+}
+.member-row { transition: background 0.15s ease; }
+.member-row:hover { background: rgba(0, 105, 92, 0.04); }
+
+/* Password method tabs */
+#btn-method-old, #btn-method-email { transition: all 0.2s; }
+#btn-method-old.active, #btn-method-email.active {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1023px) {
+  .sidebar { transform: translateX(-100%); z-index: 50; }
+  .sidebar.open { transform: translateX(0); }
+  .main-scroll { margin-left: 0; }
+  .agenda-actions { opacity: 1; }
+}
+
+@media print {
+  .sidebar, .no-print { display: none !important; }
+  .main-scroll { margin-left: 0 !important; }
+  .content-scroll { overflow: visible !important; }
+}
+
+/* ============================================================
+   ADMIN PANEL STYLES
+   ============================================================ */
+
+/* Admin layout — background gelap harus mencakup 100% area layar */
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: #F5F5F5;
+  /* Pastikan layout menutupi body background sepenuhnya */
+  position: relative;
+  isolation: isolate;
+}
+
+.admin-main-scroll {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #F5F5F5;
+  margin-left: 16rem;
+  transition: margin-left 0.3s ease;
+}
+
+.admin-content-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #F5F5F5;
+}
+/* Pastikan main di dalam admin-content-scroll selalu punya background — mencegah blank saat transisi */
+.admin-content-scroll > main {
+  background: #F5F5F5;
+  min-height: 100%;
+}
+
+/* Admin cards */
+.admin-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.admin-card-modal {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* Admin input */
+.admin-input {
+  background: #ffffff;
+  border: 1px solid #CBD5E1;
+  color: #1E293B;
+  outline: none;
+  transition: all 0.2s;
+}
+.admin-input::placeholder { color: #94A3B8; }
+.admin-input:focus {
+  border-color: #0C7A6E;
+  box-shadow: 0 0 0 3px rgba(12, 122, 110, 0.12);
+}
+
+/* Admin select */
+.admin-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: #ffffff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px 14px;
+  padding-right: 30px !important;
+  cursor: pointer;
+  color: #1E293B;
+  outline: none;
+  border: 1px solid #CBD5E1;
+}
+.admin-select:focus {
+  border-color: #0C7A6E;
+  box-shadow: 0 0 0 2px rgba(12, 122, 110, 0.12);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230C7A6E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+.admin-select option { background: #ffffff; color: #1E293B; }
+
+/* Admin sidebar responsive */
+@media (max-width: 1023px) {
+  .admin-main-scroll { margin-left: 0; }
+}
+
+/* ================================================================
+   PAGE TRANSITION — animasi fade+slide saat konten halaman berganti
+   Berlaku HANYA pada elemen dengan class page-enter (konten halaman),
+   bukan seluruh layar — sidebar tetap diam.
+   ================================================================ */
+.page-enter {
+  animation: pageSlideIn 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Print Styles (Laporan PDF Export) ── */
+.print-layout { display: none; }
+.admin-print-layout { display: none; }
+
+@media print {
+  @page { 
+    size: A4 portrait; 
+    margin: 1.4cm 1.6cm; 
+  }
+
+  /* Hide entire app except print layout */
+  body * { 
+    visibility: hidden !important; 
+  }
+
+  /* Show only the print layout (user) */
+  .print-layout,
+  .print-layout * { 
+    visibility: visible !important; 
+  }
+
+  .print-layout {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: auto;
+    background: #fff;
+    z-index: 99999;
+    padding: 0;
+  }
+
+  /* Show only the print layout (admin) */
+  .admin-print-layout,
+  .admin-print-layout * {
+    visibility: visible !important;
+  }
+
+  .admin-print-layout {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: auto;
+    background: #fff;
+    z-index: 99999;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif;
+  }
+
+  /* Typography */
+  .print-layout body,
+  .print-layout * {
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif;
+  }
+  
+  .print-layout .font-display {
+    font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+  }
+
+  /* Page break helpers */
+  .print-no-break { 
+    page-break-inside: avoid; 
+    break-inside: avoid; 
+  }
+  
+  .print-page-break { 
+    page-break-before: always; 
+    break-before: always; 
+  }
+}
+
+/* Filter buttons active states - untuk UpdateFitur */
+.filter-btn.active-time {
+  background: #083D56;
+  color: #fff;
+}
+
+.filter-btn.active-type {
+  background: #00695C;
+  color: #fff;
+}
+
+/* ================================================================
+   SKELETON SHIMMER — Loading placeholder animation
+   ================================================================ */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  display: block;
+}
+
+/* ================================================================
+   SESSION TIMEOUT WARNING MODAL — slide-up animation
+   ================================================================ */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
