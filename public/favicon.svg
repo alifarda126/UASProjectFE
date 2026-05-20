@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <!-- Background circle -->
+  <rect width="48" height="48" rx="12" fill="#083D56"/>
+  <!-- Lightning bolt / MoneFlo symbol shape in teal-green -->
+  <path d="M28 6L14 26h11l-5 16 20-22H29L28 6z" fill="#00897B" stroke="#00BFA5" stroke-width="0.5" stroke-linejoin="round"/>
+  <!-- Highlight -->
+  <path d="M28 6L22 22h9l-8 10 14-16h-9L28 6z" fill="url(#grad)" opacity="0.6"/>
+  <defs>
+    <linearGradient id="grad" x1="14" y1="6" x2="34" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4DD0E1"/>
+      <stop offset="100%" stop-color="#00695C" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+</svg>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/src/assets/MoneFloLogo2.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoneFlo - Sistem Keuangan Organisasi</title>
+    <meta name="description" content="MoneFlo — Sistem Keuangan Organisasi yang modern dan mudah digunakan." />
+
+    <!-- FontAwesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <style>
+      html, body, #root {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+    </style>
+    
+    <script>
+      (function() {
+        // ✅ Tunggu DOM ready sebelum mengakses body
+        function setBackground() {
+          try {
+            var role = localStorage.getItem('mf_last_role');
+            // Background SOLID seperti semula
+            var bg = (role === 'user') ? '#F5F5F5' : '#0A1628';
+            
+            // ✅ Cek apakah element ada sebelum mengakses style
+            if (document.documentElement) {
+              document.documentElement.style.background = bg;
+            }
+            
+            if (document.body) {
+              document.body.style.background = bg;
+              document.body.style.minHeight = '100vh';
+            }
+            
+            var root = document.getElementById('root');
+            if (root) {
+              root.style.background = 'transparent';
+            }
+          } catch(e) {
+            // Silent fail - tidak mengganggu aplikasi
+            console.warn('Background style initialization:', e.message);
+          }
+        }
+        
+        // ✅ Jalankan saat DOM sudah siap
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', setBackground);
+        } else {
+          setBackground();
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
