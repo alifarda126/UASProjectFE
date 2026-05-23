@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MoneFlo</title>
+    <script>
+      // SPA Fallback untuk Cloudflare Pages
+      // Simpan path asli ke sessionStorage, lalu redirect ke root
+      var path = window.location.pathname + window.location.search + window.location.hash;
+      sessionStorage.setItem('spa_redirect', path);
+      window.location.replace('/');
+    </script>
+  </head>
+  <body></body>
+</html>
