@@ -125,6 +125,7 @@ export default function PengaturanPage() {
   const handleChangeOld = async () => {
     if (!oldPass) { showToast('Masukkan kata sandi lama', 'error'); return; }
     if (!newPass || newPass.length < 8) { showToast('Kata sandi baru minimal 8 karakter', 'error'); return; }
+    if (!/[a-zA-Z]/.test(newPass) || !/\d/.test(newPass)) { showToast('Kata sandi harus mengandung huruf dan angka', 'error'); return; }
     if (newPass !== confirmPass) { showToast('Konfirmasi kata sandi tidak cocok', 'error'); return; }
     if (getPasswordStrength(newPass) < 2) { showToast('Kata sandi terlalu lemah', 'error'); return; }
     
@@ -148,7 +149,7 @@ export default function PengaturanPage() {
     if (!emailAddr || !/\S+@\S+\.\S+/.test(emailAddr)) { showToast('Masukkan email yang valid', 'error'); return; }
     try {
       const { default: api } = await import('../../utils/api');
-      await api.post('/auth/send-otp', { email: emailAddr, action: 'update_email' });
+      await api.post('/auth/send-otp', { email: emailAddr, action: 'forgot_password' });
       setEmailStep(2);
       showToast('Kode verifikasi telah dikirim', 'info');
     } catch (err) {
@@ -162,6 +163,7 @@ export default function PengaturanPage() {
   };
   const emailStep3 = async () => {
     if (!emailNew || emailNew.length < 8) { showToast('Kata sandi baru minimal 8 karakter', 'error'); return; }
+    if (!/[a-zA-Z]/.test(emailNew) || !/\d/.test(emailNew)) { showToast('Kata sandi harus mengandung huruf dan angka', 'error'); return; }
     if (emailNew !== emailConf) { showToast('Konfirmasi kata sandi tidak cocok', 'error'); return; }
     if (getPasswordStrength(emailNew) < 2) { showToast('Kata sandi terlalu lemah', 'error'); return; }
     
@@ -181,20 +183,104 @@ export default function PengaturanPage() {
   };
   const resetEmail = () => { setEmailStep(1); setEmailAddr(''); setEmailOtp(['', '', '', '', '', '']); setEmailNew(''); setEmailConf(''); };
 
+  /* --- Method Google --- */
+  const [googleStep, setGoogleStep] = useState(1);
+  const [googleNew,  setGoogleNew]  = useState('');
+  const [googleConf, setGoogleConf] = useState('');
+  const [showGN, setShowGN] = useState(false);
+  const [showGC, setShowGC] = useState(false);
+  const [googleToken, setGoogleToken] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('google_verified') === 'true') {
+      const token = params.get('token');
+      if (token) {
+        setMethod('google');
+        setGoogleStep(2);
+        setGoogleToken(token);
+        
+        // Bersihkan URL dari parameter agar rapi
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    } else if (params.get('google_verified') === 'error') {
+      setMethod('google');
+      showToast(params.get('message') || 'Gagal memverifikasi akun Google', 'error');
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
+  const resetGoogle = () => { setGoogleStep(1); setGoogleNew(''); setGoogleConf(''); setGoogleToken(''); };
+
+  const handleVerifyGoogle = () => {
+    // Redirect ke Google OAuth dengan action khusus dan email yang diharapkan
+    if (!user?.email) return;
+    
+    // Gunakan VITE_BACKEND_URL dari env (fallback ke localhost jika tidak ada)
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    window.location.href = `${backendUrl}/api/auth/google/redirect?action=verify_password&email=${encodeURIComponent(user.email)}`;
+  };
+
+  const handleSaveGooglePass = async () => {
+    if (!googleNew || googleNew.length < 8) { showToast('Kata sandi baru minimal 8 karakter', 'error'); return; }
+    if (!/[a-zA-Z]/.test(googleNew) || !/\d/.test(googleNew)) { showToast('Kata sandi harus mengandung huruf dan angka', 'error'); return; }
+    if (googleNew !== googleConf) { showToast('Konfirmasi kata sandi tidak cocok', 'error'); return; }
+    if (getPasswordStrength(googleNew) < 2) { showToast('Kata sandi terlalu lemah', 'error'); return; }
+    
+    try {
+      const { default: api } = await import('../../utils/api');
+      await api.post('/profil/password', {
+        google_token: googleToken,
+        password: googleNew,
+        password_confirmation: googleConf
+      });
+      setGoogleStep(3);
+      showToast('Kata sandi berhasil diatur', 'success');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Gagal mengatur kata sandi';
+      showToast(msg, 'error');
+    }
+  };
+
   return (
     <div className="page-enter space-y-6">
+      {user?.provider === 'google' && (
+        <div className="bg-blue-50/50 rounded-2xl p-5 border border-blue-100 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-white border border-blue-100 flex items-center justify-center flex-shrink-0 shadow-sm">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" className="w-6 h-6" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-slate-800">Akun Tertaut dengan Google</h4>
+            <p className="text-xs text-slate-500 mt-0.5">Alamat email Anda tidak dapat diubah karena akun ini tertaut langsung ke Google.</p>
+          </div>
+        </div>
+      )}
+
       {/* Change Password Card */}
       <div className="bg-white rounded-2xl p-6 border border-neutral-light/30">
         <h3 className="font-semibold text-primary mb-5 flex items-center gap-2">
           <i className="fas fa-shield-alt text-secondary" /> Ubah Kata Sandi
         </h3>
 
-        {/* Method Toggle — hanya tampilkan 'Kata Sandi Lama' */}
+        {/* Method Toggle */}
         <div className="bg-neutral-50 p-1 rounded-xl flex mb-6">
           <button type="button" id="btn-method-old"
-            onClick={() => { setMethod('old'); resetEmail(); }}
-            className={`flex-1 py-2 rounded-lg text-xs font-semibold text-neutral-dark transition-all ${method === 'old' ? 'active' : 'hover:bg-white/50'}`}>
+            onClick={() => { setMethod('old'); resetEmail(); resetGoogle(); }}
+            className={`flex-1 py-2 rounded-lg text-xs font-semibold text-neutral-dark transition-all ${method === 'old' ? 'active bg-white shadow-sm' : 'hover:bg-white/50'}`}>
             <i className="fas fa-key mr-1.5" /> Kata Sandi Lama
+          </button>
+          <button type="button" id="btn-method-email"
+            onClick={() => { 
+              setMethod(user?.provider === 'google' ? 'google' : 'email'); 
+              resetEmail(); 
+              resetGoogle();
+            }}
+            className={`flex-1 py-2 rounded-lg text-xs font-semibold text-neutral-dark transition-all ${['email', 'google'].includes(method) ? 'active bg-white shadow-sm' : 'hover:bg-white/50'}`}>
+            {user?.provider === 'google' ? (
+              <><i className="fab fa-google mr-1.5" /> Verifikasi Google</>
+            ) : (
+              <><i className="fas fa-envelope mr-1.5" /> Verifikasi Email</>
+            )}
           </button>
         </div>
 
@@ -329,6 +415,81 @@ export default function PengaturanPage() {
                 <h2 className="text-lg font-bold text-primary-dark mb-2">Kata Sandi Berhasil Diubah!</h2>
                 <p className="text-sm text-neutral mb-6">Silakan gunakan kata sandi baru untuk login berikutnya.</p>
                 <button type="button" onClick={() => { setMethod('old'); resetEmail(); }}
+                  className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-light transition-colors">
+                  Kembali
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Method 3: Google verification */}
+        {method === 'google' && (
+          <div>
+            {googleStep === 1 && (
+              <div className="space-y-4 text-center py-4">
+                <div className="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-4 border border-blue-100">
+                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" className="w-8 h-8" />
+                </div>
+                <h3 className="text-sm font-bold text-slate-800">Verifikasi Identitas Anda</h3>
+                <p className="text-xs text-slate-500 mb-6 max-w-sm mx-auto">Untuk mengatur kata sandi, Anda perlu memverifikasi ulang identitas menggunakan akun Google Anda.</p>
+                <button type="button" onClick={handleVerifyGoogle}
+                  className="px-6 py-2.5 bg-white border border-slate-200 shadow-sm text-slate-700 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors inline-flex items-center gap-2">
+                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4 h-4" />
+                  Lanjutkan dengan Google
+                </button>
+              </div>
+            )}
+
+            {googleStep === 2 && (
+              <div className="space-y-4">
+                <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-center gap-3 mb-2">
+                  <i className="fas fa-check-circle text-blue-500"></i>
+                  <span className="text-sm text-blue-800 font-medium">Verifikasi Google berhasil. Buat kata sandi baru Anda.</span>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-neutral uppercase tracking-wider mb-1.5">Kata Sandi Baru</label>
+                  <div className="relative">
+                    <input type={showGN ? 'text' : 'password'} placeholder="Minimal 8 karakter" value={googleNew} onChange={(e) => setGoogleNew(e.target.value)}
+                      className="input-styled w-full px-4 py-2.5 border border-neutral-light rounded-xl text-sm outline-none transition-all pr-10" />
+                    <button type="button" onClick={() => setShowGN(!showGN)} className="btn-show-pass">
+                      <i className={`fa-regular ${showGN ? 'fa-eye-slash' : 'fa-eye'} text-sm`} />
+                    </button>
+                  </div>
+                  <PasswordStrengthBars score={getPasswordStrength(googleNew)} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-neutral uppercase tracking-wider mb-1.5">Konfirmasi</label>
+                  <div className="relative">
+                    <input type={showGC ? 'text' : 'password'} placeholder="Ulangi kata sandi baru" value={googleConf} onChange={(e) => setGoogleConf(e.target.value)}
+                      className="input-styled w-full px-4 py-2.5 border border-neutral-light rounded-xl text-sm outline-none transition-all pr-10" />
+                    <button type="button" onClick={() => setShowGC(!showGC)} className="btn-show-pass">
+                      <i className={`fa-regular ${showGC ? 'fa-eye-slash' : 'fa-eye'} text-sm`} />
+                    </button>
+                  </div>
+                  {googleConf && (
+                    <div className={`text-xs px-3 py-2 rounded-lg mt-1 ${googleNew === googleConf ? 'bg-tertiary-50 text-tertiary' : 'bg-red-50 text-red-500'}`}>
+                      <i className={`fas ${googleNew === googleConf ? 'fa-check-circle' : 'fa-times-circle'} mr-1`} />
+                      {googleNew === googleConf ? 'Kata sandi cocok' : 'Kata sandi tidak cocok'}
+                    </div>
+                  )}
+                </div>
+                <button type="button" onClick={handleSaveGooglePass}
+                  className="w-full py-3 bg-tertiary text-white rounded-xl text-sm font-semibold hover:bg-tertiary-light transition-colors">
+                  Simpan Kata Sandi Baru
+                </button>
+                <button type="button" onClick={resetGoogle} className="w-full text-xs text-neutral hover:text-neutral-dark underline">Batal</button>
+              </div>
+            )}
+
+            {googleStep === 3 && (
+              <div className="text-center py-6">
+                <div className="w-16 h-16 rounded-full bg-tertiary-50 flex items-center justify-center mx-auto mb-4">
+                  <i className="fas fa-check-circle text-tertiary text-3xl" />
+                </div>
+                <h2 className="text-lg font-bold text-primary-dark mb-2">Kata Sandi Berhasil Diubah!</h2>
+                <p className="text-sm text-neutral mb-6">Anda kini dapat login menggunakan kata sandi ini selain menggunakan Google.</p>
+                <button type="button" onClick={() => { setMethod('old'); resetGoogle(); }}
                   className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-light transition-colors">
                   Kembali
                 </button>

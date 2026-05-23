@@ -1,5 +1,5 @@
 // src/pages/user/LaporanPage.jsx
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Chart, registerables } from 'chart.js';
 import { useApp } from '../../context/AppContext';
@@ -63,15 +63,17 @@ export default function LaporanPage() {
   const chartInstance = useRef(null);
 
   // State untuk custom confirm dialog
-  const [confirmId,  setConfirmId]  = useState(null);
+  const [confirmId, setConfirmId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [chartImageUrl, setChartImageUrl] = useState(null);
+  const [isChartReady, setIsChartReady] = useState(false);
 
   // Refresh data saat halaman dimuat
   useEffect(() => {
     const loadData = async () => {
       try {
         await fetchTransactions();
-        filters.refresh();
+        await filters.refresh();
       } catch (error) {
         console.error('Gagal memuat transaksi:', error);
       }
@@ -83,14 +85,15 @@ export default function LaporanPage() {
   const tableData = filters.getTableData();
 
   /* 6-bulan data */
-  const months6 = useMemo(() => buildLast6Months(state.transactions), [state.transactions]);
+  const months6 = useMemo(() => buildLast6Months(state.transactions || []), [state.transactions]);
   const hasChartData = months6.some(m => m.income > 0 || m.expense > 0);
   const maxVal = Math.max(...months6.map(m => Math.max(m.income, m.expense)), 0);
 
   /* Alokasi dari transaksi pengeluaran real per kategori */
   const allocations = useMemo(() => {
     const map = {};
-    state.transactions
+    const transactions = state.transactions || [];
+    transactions
       .filter(t => t.type === 'pengeluaran')
       .forEach(t => { map[t.cat] = (map[t.cat] || 0) + Number(t.amount); });
     return Object.entries(map)
@@ -99,62 +102,159 @@ export default function LaporanPage() {
   }, [state.transactions]);
   const totalAlloc = allocations.reduce((s, a) => s + a.amount, 0);
 
-  /* ── Arus Kas Chart ── */
+  /* ── Arus Kas Chart (Revisi Anti-Kedip) ── */
   useEffect(() => {
-    if (chartInstance.current) { chartInstance.current.destroy(); chartInstance.current = null; }
-    if (!hasChartData) return;
-    const ctx = chartRef.current?.getContext('2d');
-    if (!ctx) return;
-    const yMax = smartMax(maxVal);
-    chartInstance.current = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: months6.map(m => m.label),
-        datasets: [
-          { label: 'Pemasukan', data: months6.map(m => m.income), borderColor: '#00695C', backgroundColor: 'rgba(0,105,92,0.08)', tension: 0.4, fill: true, pointBackgroundColor: '#00695C', pointRadius: 4 },
-          { label: 'Pengeluaran', data: months6.map(m => m.expense), borderColor: '#083D56', backgroundColor: 'rgba(8,61,86,0.06)', tension: 0.4, fill: true, pointBackgroundColor: '#083D56', pointRadius: 4 },
-        ],
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { family: 'Plus Jakarta Sans', size: 12 } } },
-          tooltip: { callbacks: { label: (ctx) => ctx.dataset.label + ': ' + formatRupiah(ctx.raw) } },
-        },
-        scales: {
-          y: {
-            beginAtZero: true, max: yMax,
-            ticks: { callback: smartTick, font: { family: 'Space Grotesk', size: 11 }, color: '#767779' },
-            grid: { color: 'rgba(118,119,121,0.1)' },
-          },
-          x: { ticks: { font: { family: 'Plus Jakarta Sans', size: 12 }, color: '#424242' }, grid: { display: false } },
-        },
-      },
-    });
-    return () => chartInstance.current?.destroy();
-  }, [hasChartData, months6, maxVal]);
+    // 1. Pastikan canvas sudah dirender di DOM
+    if (!hasChartData || !chartRef.current) return;
 
-  // ✅ Tampilkan skeleton saat data pertama kali dimuat (setelah semua hooks)
-  if (isDataLoading && state.transactions.length === 0) return <SkeletonLaporan />;
+    const ctx = chartRef.current.getContext('2d');
+    const yMax = smartMax(maxVal);
+
+    // 2. Jika chart BELUM ada, inisialisasi baru
+    if (!chartInstance.current) {
+      chartInstance.current = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: months6.map(m => m.label),
+          datasets: [
+            { 
+              label: 'Pemasukan', 
+              data: months6.map(m => m.income), 
+              borderColor: '#00695C', 
+              backgroundColor: 'rgba(0,105,92,0.08)', 
+              tension: 0.4, 
+              fill: true, 
+              pointBackgroundColor: '#00695C', 
+              pointRadius: 4,
+              pointHoverRadius: 6
+            },
+            { 
+              label: 'Pengeluaran', 
+              data: months6.map(m => m.expense), 
+              borderColor: '#083D56', 
+              backgroundColor: 'rgba(8,61,86,0.06)', 
+              tension: 0.4, 
+              fill: true, 
+              pointBackgroundColor: '#083D56', 
+              pointRadius: 4,
+              pointHoverRadius: 6
+            },
+          ],
+        },
+        options: {
+          responsive: true, 
+          maintainAspectRatio: false,
+          // Matikan animasi saat hover agar tidak flicker
+          hover: { animationDuration: 0 },
+          // Hanya jalankan animasi saat pertama kali load
+          animation: { duration: 800 },
+          plugins: {
+            legend: { 
+              position: 'top', 
+              labels: { 
+                usePointStyle: true, 
+                pointStyle: 'circle', 
+                padding: 16, 
+                font: { family: 'Plus Jakarta Sans', size: 12 } 
+              } 
+            },
+            tooltip: { 
+              callbacks: { 
+                label: (ctx) => ctx.dataset.label + ': ' + formatRupiah(ctx.raw) 
+              } 
+            },
+          },
+          scales: {
+            y: {
+              beginAtZero: true, 
+              max: yMax,
+              ticks: { 
+                callback: smartTick, 
+                font: { family: 'Space Grotesk', size: 11 }, 
+                color: '#767779' 
+              },
+              grid: { color: 'rgba(118,119,121,0.1)' },
+            },
+            x: { 
+              ticks: { 
+                font: { family: 'Plus Jakarta Sans', size: 12 }, 
+                color: '#424242' 
+              }, 
+              grid: { display: false } 
+            },
+          },
+        },
+      });
+      setIsChartReady(true);
+    } 
+    // 3. Jika chart SUDAH ada, update data TANPA memicu animasi (mencegah flicker)
+    else {
+      const chart = chartInstance.current;
+      chart.data.labels = months6.map(m => m.label);
+      chart.data.datasets[0].data = months6.map(m => m.income);
+      chart.data.datasets[1].data = months6.map(m => m.expense);
+      chart.options.scales.y.max = yMax;
+      
+      // Parameter 'none' sangat krusial di sini untuk mencegah chart berkedip
+      chart.update('none'); 
+    }
+  }, [hasChartData, months6, maxVal]); 
+
+  // 4. Hancurkan chart HANYA jika data ditarik (kosong) dan komponen tetap terbuka
+  useEffect(() => {
+    if (!hasChartData && chartInstance.current) {
+      chartInstance.current.destroy();
+      chartInstance.current = null;
+      setIsChartReady(false);
+    }
+  }, [hasChartData]);
+
+  // 5. Cleanup chart saat user pindah/menutup halaman
+  useEffect(() => {
+    return () => {
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+        chartInstance.current = null;
+      }
+    };
+  }, []);
 
   /* ── Export CSV ── */
   const exportCSV = () => {
-    const rows = [['Tanggal', 'Keterangan', 'Kategori', 'Tipe', 'Jumlah', 'Status']];
-    tableData.forEach(t => rows.push([t.date, t.desc, t.cat, t.type, t.amount, t.status]));
-    const csv = rows.map(r => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    if (!tableData || tableData.length === 0) {
+      showToast('Tidak ada data untuk diekspor', 'warning');
+      return;
+    }
+    
+    const header = ['Tanggal', 'Keterangan', 'Kategori', 'Tipe', 'Jumlah'];
+    const rows = tableData.map(t => [t.date, t.desc, t.cat, t.type, t.amount]);
+    const csvContent = "\ufeff" + "sep=;\n" + [header, ...rows].map(r => r.join(';')).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'laporan.csv'; a.click();
+    const a = document.createElement('a');
+    
+    a.href = url;
+    a.download = `laporan-organisasi-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
     URL.revokeObjectURL(url);
   };
 
-  /* ── Export PDF via window.print() ── */
-  const exportPDF = () => window.print();
+  /* ── Export PDF ── */
+  const exportPDF = useCallback(() => {
+    let imgUrl = null;
+    if (chartRef.current && isChartReady) {
+      try { 
+        imgUrl = chartRef.current.toDataURL('image/png', 1.0); 
+      } catch (_) {}
+    }
+    setChartImageUrl(imgUrl);
+    setTimeout(() => window.print(), 150);
+  }, [isChartReady]);
 
-  /* ── Hapus transaksi — buka dialog konfirmasi ── */
+  /* ── Hapus transaksi ── */
   const handleDelete = (id) => setConfirmId(id);
 
-  /* ── Konfirmasi hapus — panggil API ── */
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
     try {
@@ -169,6 +269,11 @@ export default function LaporanPage() {
       setConfirmId(null);
     }
   };
+
+  // Tampilkan skeleton saat loading
+  if (isDataLoading && state.transactions.length === 0) {
+    return <SkeletonLaporan />;
+  }
 
   return (
     <div className="page-enter space-y-6">
@@ -203,7 +308,9 @@ export default function LaporanPage() {
         <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-neutral-light/30">
           <h3 className="font-semibold text-primary mb-4">Visualisasi Arus Kas</h3>
           {hasChartData ? (
-            <div className="h-72"><canvas ref={chartRef} /></div>
+            <div className="h-72">
+              <canvas ref={chartRef} />
+            </div>
           ) : (
             <div className="h-72 flex flex-col items-center justify-center text-neutral">
               <i className="fas fa-chart-line text-4xl text-neutral-light mb-3" />
@@ -260,12 +367,13 @@ export default function LaporanPage() {
       </TableWrapper>
 
       {/* ── Hidden Print Layout ── */}
-      <PrintLayout 
+      <PrintLayout
         organisasi={organisasi}
         stats={stats}
         allocations={allocations}
         tableData={tableData}
         totalAlloc={totalAlloc}
+        chartImageUrl={chartImageUrl}
       />
 
       {/* ── Custom Confirm Dialog ── */}

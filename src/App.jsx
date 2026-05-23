@@ -1,5 +1,5 @@
 /* ── KOMPONEN UTAMA (ROOT): Menangani routing aplikasi ── */
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useApp } from './context/AppContext';
 import { useAuth } from './hooks/useAuth';
@@ -56,6 +56,40 @@ function ContentLoader({ page }) {
 }
 
 /* ============================================================
+   ERROR BOUNDARY
+   ============================================================ */
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    this.setState({ errorInfo });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '20px', background: '#f8d7da', color: '#721c24', minHeight: '100vh' }}>
+          <h1 style={{ fontSize: '24px', marginBottom: '10px' }}>Something went wrong.</h1>
+          <p style={{ fontWeight: 'bold' }}>{this.state.error && this.state.error.toString()}</p>
+          <pre style={{ background: '#f1b0b7', padding: '10px', overflowX: 'auto', fontSize: '12px', marginTop: '10px' }}>
+            {this.state.errorInfo && this.state.errorInfo.componentStack}
+          </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+/* ============================================================
    ADMIN LAYOUT — dengan auth guard built-in + session timeout
    ============================================================ */
 function AdminLayout() {
@@ -109,6 +143,7 @@ function UserLayout() {
   const { isAuthenticated, isLoading, logout } = useAuth();
   const { unreadCount, organisasi } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
   const [showTimeoutWarn, setShowTimeoutWarn] = useState(false);
 
   // ✅ Session timeout — 30 menit tidak aktif
@@ -118,9 +153,19 @@ function UserLayout() {
     onTimeout: () => { setShowTimeoutWarn(false); logout(); },
   });
 
-  if (!isLoading && !isAuthenticated)  return <Navigate to="/login" state={{ from: location }} replace />;
-  if (!isLoading && organisasi?.is_suspended) return <Navigate to="/dashboard/suspended" replace />;
-  if (!isLoading && organisasi?.is_active === false && !organisasi?.is_suspended) return <Navigate to="/dashboard/deactivated" replace />;
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        navigate('/login', { state: { from: location }, replace: true });
+      } else if (organisasi?.is_suspended) {
+        navigate('/dashboard/suspended', { replace: true });
+      } else if (organisasi?.is_active === false) {
+        navigate('/dashboard/deactivated', { replace: true });
+      }
+    }
+  }, [isLoading, isAuthenticated, organisasi?.is_suspended, organisasi?.is_active, navigate, location]);
+
+
 
   const pathParts   = location.pathname.split('/');
   const currentPage = pathParts.length > 2 ? pathParts[2] : 'beranda';
@@ -139,6 +184,10 @@ function UserLayout() {
     setModals((m) => ({ ...m, [name]: true }));
   };
   const closeModal = (name) => setModals((m) => ({ ...m, [name]: false }));
+
+  if (!isLoading && (!isAuthenticated || organisasi?.is_suspended || (organisasi?.is_active === false && !organisasi?.is_suspended))) {
+    return null; // Tunda render sampai redirect selesai
+  }
 
   return (
     <div className="h-screen overflow-hidden flex flex-col">
@@ -179,10 +228,25 @@ function RequireSuspendedPage() {
   const { isAuthenticated, isLoading } = useAuth();
   const { organisasi } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  if (isLoading) return null;
-  if (!isAuthenticated) return <Navigate to="/login" state={{ from: location }} replace />;
-  if (!organisasi?.is_suspended) return <Navigate to="/dashboard" replace />;
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        navigate('/login', { state: { from: location }, replace: true });
+      } else if (!organisasi?.is_suspended) {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [isLoading, isAuthenticated, organisasi?.is_suspended, navigate, location]);
+
+  if (isLoading) {
+    return <SkeletonPage />;
+  }
+
+  if (!isAuthenticated || !organisasi?.is_suspended) {
+    return null;
+  }
 
   return <SuspendedPage />;
 }
@@ -192,13 +256,27 @@ function RequireDeactivatedPage() {
   const { isAuthenticated, isLoading } = useAuth();
   const { organisasi } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  if (isLoading) return null;
-  if (!isAuthenticated) return <Navigate to="/login" state={{ from: location }} replace />;
-  // Jika tersuspend, arahkan ke suspended
-  if (organisasi?.is_suspended) return <Navigate to="/dashboard/suspended" replace />;
-  // Jika masih aktif, arahkan ke dashboard
-  if (organisasi?.is_active !== false) return <Navigate to="/dashboard" replace />;
+  useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        navigate('/login', { state: { from: location }, replace: true });
+      } else if (organisasi?.is_suspended) {
+        navigate('/dashboard/suspended', { replace: true });
+      } else if (organisasi?.is_active !== false) {
+        navigate('/dashboard', { replace: true });
+      }
+    }
+  }, [isLoading, isAuthenticated, organisasi?.is_suspended, organisasi?.is_active, navigate, location]);
+
+  if (isLoading) {
+    return <SkeletonPage />;
+  }
+
+  if (!isAuthenticated || organisasi?.is_suspended || organisasi?.is_active !== false) {
+    return null;
+  }
 
   return <DeactivatedPage />;
 }
@@ -226,7 +304,7 @@ export default function App() {
   }, [fetchUser, navigate]);
 
   return (
-    <>
+    <ErrorBoundary>
     <Routes>
       {/* PUBLIC ROUTES */}
       <Route path="/login" element={<LoginPage />} />
@@ -263,6 +341,6 @@ export default function App() {
       {/* CATCH ALL 404 */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
-    </>
+    </ErrorBoundary>
   );
 }

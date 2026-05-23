@@ -1,5 +1,5 @@
 import { useAdmin } from '../../context/AdminContext';
-import { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo, useState, useCallback, forwardRef } from 'react';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -26,13 +26,13 @@ function smartMaxCount(maxVal) {
   return Math.ceil(nice * 1.25);
 }
 
-/* ── SUB-KOMPONEN: Pembungkus Chart.js Generik ── */
-/* Menerima objek konfigurasi chart untuk di-render ulang secara otomatis jika berubah */
-function ChartCanvas({ config, height = 'h-52' }) {
-  const ref  = useRef(null);
+/* ── SUB-KOMPONEN: Pembungkus Chart.js Generik (forwardRef agar parent bisa akses canvas) ── */
+const ChartCanvas = forwardRef(function ChartCanvas({ config, height = 'h-52' }, fwdRef) {
+  const internalRef = useRef(null);
+  const canvasRef   = fwdRef || internalRef;
   const inst = useRef(null);
   useEffect(() => {
-    const ctx = ref.current?.getContext('2d');
+    const ctx = canvasRef.current?.getContext('2d');
     if (!ctx) return;
     if (inst.current) inst.current.destroy();
     const finalConfig = {
@@ -45,8 +45,8 @@ function ChartCanvas({ config, height = 'h-52' }) {
     inst.current = new Chart(ctx, finalConfig);
     return () => inst.current?.destroy();
   }, [JSON.stringify(config)]);
-  return <div className={height}><canvas ref={ref} className="w-full h-full" /></div>;
-}
+  return <div className={height}><canvas ref={canvasRef} className="w-full h-full" /></div>;
+});
 
 const GRID  = { color: 'rgba(255,255,255,0.05)' };
 const TICKS = (cb) => ({ ticks: { callback: cb, color: '#64748b', font: { size: 11 } }, grid: GRID });
@@ -54,18 +54,27 @@ const TICKS_INT = (cb) => ({ ticks: { callback: cb, color: '#64748b', font: { si
 
 /* ── FUNGSI UTILITY: Ekspor data laporan organisasi ke file CSV ── */
 function exportCSV(orgs) {
+  // Header kolom
   const header = ['Nama', 'Tipe', 'Email', 'Anggota', 'Saldo', 'Status'];
-  const rows   = orgs.map(o => [o.name, o.type, o.email, o.memberCount, o.balance, o.status]);
-  const csv    = [header, ...rows].map(r => r.join(',')).join('\n');
-  const blob   = new Blob([csv], { type: 'text/csv' });
-  const url    = URL.createObjectURL(blob);
-  const a      = document.createElement('a');
-  a.href = url; a.download = `laporan-organisasi-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click(); URL.revokeObjectURL(url);
+  
+  // Mapping baris
+  const rows = orgs.map(o => [o.name, o.type, o.email, o.memberCount, o.balance, o.status]);
+  
+  // Gabungin data: 'sep=;' bikin Excel otomatis pake titik koma. '\ufeff' biar UTF-8 jalan.
+  const csvContent = "\ufeff" + "sep=;\n" + [header, ...rows].map(r => r.join(';')).join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  
+  a.href = url;
+  a.download = `laporan-organisasi-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 /* ── KOMPONEN: Admin Print Layout (tersembunyi kecuali saat print) ── */
-function AdminPrintLayout({ orgs, stats, laporanSummary }) {
+function AdminPrintLayout({ orgs, stats, laporanSummary, chartImages = {} }) {
   const fmtPrint = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n || 0);
   const totalSaldo  = laporanSummary.total_saldo     || stats.totalBalance || 0;
   const totalMasuk  = laporanSummary.total_pemasukan  || 0;
@@ -126,6 +135,28 @@ function AdminPrintLayout({ orgs, stats, laporanSummary }) {
           </div>
         ))}
       </div>
+
+      {/* Grafik (2x2 grid dari canvas images) */}
+      {(chartImages.donut || chartImages.hbar || chartImages.vbar || chartImages.line) && (
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 9, fontWeight: 700, color: '#083D56', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 8, borderLeft: '3px solid #00695C', paddingLeft: 8 }}>Grafik Statistik Organisasi</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            {[
+              { key: 'donut', label: 'Distribusi Status Organisasi' },
+              { key: 'hbar',  label: 'Saldo Tertinggi per Organisasi' },
+              { key: 'vbar',  label: 'Jumlah Organisasi per Tipe' },
+              { key: 'line',  label: 'Jumlah Anggota per Organisasi' },
+            ].map(({ key, label }) =>
+              chartImages[key] ? (
+                <div key={key} style={{ border: '1.5px solid #e0e7ef', borderRadius: 8, padding: 8, background: '#fff' }}>
+                  <div style={{ fontSize: 7.5, fontWeight: 700, color: '#546e7a', marginBottom: 4 }}>{label}</div>
+                  <img src={chartImages[key]} alt={label} style={{ width: '100%', height: 'auto', maxHeight: 120, objectFit: 'contain', display: 'block' }} />
+                </div>
+              ) : null
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Tabel organisasi */}
       <div style={{ fontSize: 9, fontWeight: 700, color: '#083D56', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 8, borderLeft: '3px solid #00695C', paddingLeft: 8 }}>Daftar Organisasi ({orgs.length})</div>
@@ -317,6 +348,36 @@ export default function LaporanAdminPage() {
     },
   };
 
+  /* ── Refs untuk setiap canvas chart ── */
+  const donutRef = useRef(null);
+  const hBarRef  = useRef(null);
+  const vBarRef  = useRef(null);
+  const lineRef  = useRef(null);
+
+  /* ── State gambar chart untuk dikirim ke AdminPrintLayout ── */
+  const [chartImages, setChartImages] = useState({});
+
+  /* ── Export PDF — tangkap semua canvas chart sebelum print ── */
+  const exportPDF = useCallback(() => {
+    const snap = (ref) => {
+      try { return ref.current ? ref.current.toDataURL('image/png', 1.0) : null; } catch (_) { return null; }
+    };
+    setChartImages({
+      donut: snap(donutRef),
+      hbar:  snap(hBarRef),
+      vbar:  snap(vBarRef),
+      line:  snap(lineRef),
+    });
+    // Simpan judul halaman sebelum print
+    const originalTitle = document.title;
+    document.title = `Laporan Sistem - ${new Date().toISOString().slice(0,10)}`;
+    // Beri waktu React render ulang AdminPrintLayout dengan gambar sebelum print
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => { document.title = originalTitle; }, 100);
+    }, 150);
+  }, []);
+
   /* ================================================================ */
   return (
     <div className="page-enter space-y-5 print:space-y-4">
@@ -332,7 +393,7 @@ export default function LaporanAdminPage() {
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-teal-600/40 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:border-teal-600/60 text-sm font-semibold transition-all">
             <i className="fas fa-file-csv text-xs text-teal-600" /> Ekspor CSV
           </button>
-          <button type="button" onClick={() => window.print()}
+          <button type="button" onClick={exportPDF}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#083D56] hover:bg-[#0C5272] text-white text-sm font-semibold transition-all hover:shadow-lg hover:shadow-[#083D56]/30">
             <i className="fas fa-print text-xs" /> Cetak / PDF
           </button>
@@ -365,13 +426,13 @@ export default function LaporanAdminPage() {
           <h3 className="text-slate-800 font-semibold text-sm mb-4 flex items-center gap-2">
             <i className="fas fa-chart-pie text-teal-600 text-xs" /> Distribusi Status Organisasi
           </h3>
-          <ChartCanvas config={donutConfig} height="h-56" />
+          <ChartCanvas ref={donutRef} config={donutConfig} height="h-56" />
         </div>
         <div className="admin-card rounded-2xl p-5">
           <h3 className="text-slate-800 font-semibold text-sm mb-4 flex items-center gap-2">
             <i className="fas fa-chart-bar text-amber-400 text-xs" /> Saldo Tertinggi per Organisasi
           </h3>
-          <ChartCanvas config={hBarConfig} height="h-56" />
+          <ChartCanvas ref={hBarRef} config={hBarConfig} height="h-56" />
         </div>
       </div>
 
@@ -381,13 +442,13 @@ export default function LaporanAdminPage() {
           <h3 className="text-slate-800 font-semibold text-sm mb-4 flex items-center gap-2">
             <i className="fas fa-layer-group text-teal-600 text-xs" /> Jumlah Organisasi per Tipe
           </h3>
-          <ChartCanvas config={vBarConfig} height="h-52" />
+          <ChartCanvas ref={vBarRef} config={vBarConfig} height="h-52" />
         </div>
         <div className="admin-card rounded-2xl p-5">
           <h3 className="text-slate-800 font-semibold text-sm mb-4 flex items-center gap-2">
             <i className="fas fa-chart-line text-emerald-500 text-xs" /> Jumlah Anggota per Organisasi
           </h3>
-          <ChartCanvas config={lineConfig} height="h-52" />
+          <ChartCanvas ref={lineRef} config={lineConfig} height="h-52" />
         </div>
       </div>
 
@@ -458,7 +519,7 @@ export default function LaporanAdminPage() {
       </div>
 
       {/* ── Hidden Admin Print Layout (ditampilkan hanya saat print) ── */}
-      <AdminPrintLayout orgs={orgs} stats={stats} laporanSummary={laporanSummary} />
+      <AdminPrintLayout orgs={orgs} stats={stats} laporanSummary={laporanSummary} chartImages={chartImages} />
     </div>
   );
 }

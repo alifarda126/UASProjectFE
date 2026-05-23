@@ -74,6 +74,7 @@ export default function ForgotPasswordPage({ onBackToLogin }) {
   /* Step 3: Submit OTP + password baru ke backend */
   const step3 = async () => {
     if (!newPass || newPass.length < 8) { showToast('Kata sandi baru minimal 8 karakter', 'error'); return; }
+    if (!/[a-zA-Z]/.test(newPass) || !/\d/.test(newPass)) { showToast('Kata sandi harus mengandung huruf dan angka', 'error'); return; }
     if (newPass !== confirmPass) { showToast('Konfirmasi kata sandi tidak cocok', 'error'); return; }
     if (getPasswordStrength(newPass) < 2) { showToast('Kata sandi terlalu lemah', 'error'); return; }
     setIsLoading(true);

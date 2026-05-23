@@ -34,8 +34,7 @@ function AdminSelect({ value, onChange, options }) {
         <i className={`fas fa-chevron-down text-slate-500 flex-shrink-0 text-[11px] transition-transform duration-200 ${open ? 'rotate-180 text-teal-600' : ''}`} />
       </button>
       {open && (
-        <div className="absolute z-[70] left-0 min-w-max mt-1.5 rounded-xl overflow-hidden border border-slate-200"
-          style={{ background: '#1e293b', boxShadow: '0 10px 32px rgba(0,0,0,0.4)' }}>
+        <div className="absolute z-[70] left-0 min-w-max mt-1.5 rounded-xl bg-white overflow-hidden border border-slate-200 shadow-xl">
           {options.map(opt => {
             const isSel = opt === value;
             return (
@@ -125,7 +124,7 @@ function OrgRow({ org, onDetail, onEdit, onDelete, onSuspend, onUnsuspend }) {
         <span className={`text-[11px] font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLE[displayStatus] || ''}`}>{displayStatus}</span>
       </td>
       <td className="px-4 py-4">
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-100 transition-opacity">
           <button type="button" onClick={() => onDetail(org)} title="Lihat Detail"
             className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-teal-600 hover:bg-teal-600/10 transition-all">
             <i className="fas fa-eye text-xs" />
@@ -158,7 +157,7 @@ function OrgRow({ org, onDetail, onEdit, onDelete, onSuspend, onUnsuspend }) {
 /* ── KOMPONEN UTAMA: Halaman Manajemen Organisasi ── */
 /* Tempat admin dapat menambah, mengedit, menghapus, suspend, serta mencari/memfilter organisasi */
 export default function OrganisasiPage() {
-  const { orgs, deleteOrg, suspendOrg, unsuspendOrg, fetchAdminData } = useAdmin();
+  const { orgs, deleteOrg, suspendOrg, unsuspendOrg, fetchAdminData, isLoading } = useAdmin();
   const showToast = useToast();
 
   useEffect(() => {
@@ -219,7 +218,7 @@ export default function OrganisasiPage() {
   };
 
   return (
-    <div className="page-enter space-y-5">
+    <div className="space-y-5">
       {/* ── HEADER BAGIAN ATAS: Judul dan Tombol Tambah ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -277,7 +276,12 @@ export default function OrganisasiPage() {
               ))}
             </tbody>
           </table>
-          {filtered.length === 0 && (
+          {isLoading ? (
+            <div className="text-center py-16">
+              <i className="fas fa-spinner fa-spin text-teal-600 text-3xl mb-4" />
+              <p className="text-slate-500 font-semibold">Memuat data organisasi...</p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="text-center py-16">
               <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
                 <i className="fas fa-search text-slate-500 text-xl" />
@@ -285,7 +289,7 @@ export default function OrganisasiPage() {
               <p className="text-slate-500 font-semibold">Tidak ada organisasi ditemukan</p>
               <p className="text-slate-600 text-sm mt-1">Coba ubah filter pencarian</p>
             </div>
-          )}
+          ) : null}
         </div>
         {filtered.length > 0 && (
           <div className="px-4 py-3 border-t border-slate-200 flex items-center justify-between">

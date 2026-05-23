@@ -12,7 +12,11 @@ dist
 dist-ssr
 *.local
 .env
-.env.*
+.env.local
+.env.*.local
+# .env.production sengaja TIDAK di-ignore agar Cloudflare Pages
+# bisa membaca VITE_* saat build. File ini hanya berisi URL publik,
+# BUKAN secret/password.
 
 # Editor directories and files
 .vscode/*

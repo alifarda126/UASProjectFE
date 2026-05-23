@@ -66,6 +66,9 @@ export default function RegisterPage({ onShowLogin }) {
       if (form.pass !== form.passConfirm) {
         showToast('Konfirmasi kata sandi tidak cocok', 'error'); return;
       }
+      if (!/[a-zA-Z]/.test(form.pass) || !/\d/.test(form.pass)) {
+        showToast('Kata sandi harus mengandung huruf dan angka', 'error'); return;
+      }
       if (getPasswordStrength(form.pass) < 2) {
         showToast('Kata sandi terlalu lemah', 'error'); return;
       }
@@ -275,7 +278,8 @@ export default function RegisterPage({ onShowLogin }) {
                 {/* Google Button */}
                 <button type="button"
                   onClick={() => {
-                    window.location.href = 'http://localhost:8000/api/auth/google/redirect';
+                    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+                    window.location.href = `${backendUrl}/api/auth/google/redirect`;
                   }}
                   className="w-full py-2.5 bg-white border border-neutral-light text-neutral-dark rounded-xl font-semibold hover:bg-neutral-50 transition-colors flex items-center justify-center gap-2">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

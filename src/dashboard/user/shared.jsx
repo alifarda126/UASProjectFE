@@ -404,7 +404,7 @@ export function TableWrapper({ children }) {
 }
 
 /* ── Print Layout Component untuk Laporan PDF Export ── */
-export function PrintLayout({ organisasi, stats, allocations, tableData, totalAlloc }) {
+export function PrintLayout({ organisasi, stats, allocations, tableData, totalAlloc, chartImageUrl }) {
   // Hitung inisial 2 kata (fallback saat tidak ada logo)
   const initials = (organisasi?.name || 'O')
     .split(' ').slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || 'O';
@@ -445,6 +445,16 @@ export function PrintLayout({ organisasi, stats, allocations, tableData, totalAl
             </div>
           ))}
       </div>
+
+      {/* ── Grafik Arus Kas (sebagai gambar dari canvas) ── */}
+      {chartImageUrl && (
+        <div className="print-no-break" style={{ marginBottom: 4 }}>
+          <div style={{ fontSize: 9, fontWeight: 700, color: '#083D56', textTransform: 'uppercase', letterSpacing: '.05em', margin: '14px 0 8px', borderLeft: '3px solid #00695C', paddingLeft: 8 }}>Visualisasi Arus Kas (6 Bulan Terakhir)</div>
+          <div style={{ border: '1.5px solid #e0e7ef', borderRadius: 10, padding: '10px', background: '#fff' }}>
+            <img src={chartImageUrl} alt="Grafik Arus Kas" style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 200, objectFit: 'contain' }} />
+          </div>
+        </div>
+      )}
 
       {allocations.length > 0 && (
         <div className="print-no-break">
