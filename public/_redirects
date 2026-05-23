@@ -1,1 +1,2 @@
-/* /index.html 200
+# SPA routing ditangani oleh public/404.html
+# Rule /* /index.html 200 dihapus karena Cloudflare Pages v2 mendeteksinya sebagai infinite loop
