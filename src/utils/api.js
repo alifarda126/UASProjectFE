@@ -15,7 +15,7 @@ const api = axios.create({
     'Accept': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   },
-  timeout: 15000, // Timeout 15 detik
+  timeout: 30000, // Timeout 30 detik (Railway cold start bisa lambat)
 });
 
 /* ── REQUEST INTERCEPTOR ── */
