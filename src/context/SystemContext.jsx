@@ -22,36 +22,54 @@ export function SystemProvider({ children }) {
 
   useEffect(() => {
     let lastSettingsStr = '';
+    let abortController = null;
 
     const fetchSettings = () => {
-      api.get('/settings').then(({ data }) => {
-        if (data.data) {
-          const newStr = JSON.stringify(data.data);
-          
-          if (!lastSettingsStr) {
-            // Muat pertama kali
-            lastSettingsStr = newStr;
-            setSettings({ ...DEFAULTS, ...data.data });
-          } else if (lastSettingsStr !== newStr) {
-            // Data berubah
-            if (sessionStorage.getItem('just_saved_settings')) {
-              // Jika ini adalah browser admin yang baru saja menyimpan, kita abaikan reload
-              sessionStorage.removeItem('just_saved_settings');
+      // Cancel request sebelumnya jika masih pending (hindari request menumpuk)
+      if (abortController) abortController.abort();
+      abortController = new AbortController();
+
+      api.get('/settings', { signal: abortController.signal })
+        .then(({ data }) => {
+          abortController = null;
+          if (data.data) {
+            const newStr = JSON.stringify(data.data);
+
+            if (!lastSettingsStr) {
+              // Muat pertama kali
               lastSettingsStr = newStr;
               setSettings({ ...DEFAULTS, ...data.data });
-            } else {
-              // Browser user lain, otomatis refresh untuk menerima update baru
-              window.location.reload();
+            } else if (lastSettingsStr !== newStr) {
+              // Data berubah
+              if (sessionStorage.getItem('just_saved_settings')) {
+                // Jika ini adalah browser admin yang baru saja menyimpan, abaikan reload
+                sessionStorage.removeItem('just_saved_settings');
+                lastSettingsStr = newStr;
+                setSettings({ ...DEFAULTS, ...data.data });
+              } else {
+                // Browser user lain, otomatis refresh untuk menerima update baru
+                window.location.reload();
+              }
             }
           }
-        }
-      }).catch(err => console.error("Gagal load settings:", err));
+        })
+        .catch(err => {
+          // Abaikan error AbortError (request sengaja dibatalkan)
+          if (err.name === 'AbortError' || err.code === 'ERR_CANCELED') return;
+          // Abaikan timeout saat polling background — server mungkin cold start
+          if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) return;
+          console.warn('Settings poll gagal:', err.message);
+        });
     };
 
     fetchSettings();
-    const interval = setInterval(fetchSettings, 5000); // Polling tiap 5 detik
-    
-    return () => clearInterval(interval);
+    // Polling tiap 60 detik — settings jarang berubah, tidak perlu tiap 5 detik
+    const interval = setInterval(fetchSettings, 60000);
+
+    return () => {
+      clearInterval(interval);
+      if (abortController) abortController.abort();
+    };
   }, []);
 
   const updateSettings = useCallback(async (newSettings) => {
