@@ -22,8 +22,8 @@ const FEATURES = [
     icon: 'fa-users',
     color: '#6B48D9',
     bg: 'rgba(107,72,217,0.1)',
-    title: 'Manajemen Anggota',
-    desc: 'Kelola anggota organisasi dengan mudah. Atur peran dan hak akses setiap anggota secara terpusat.',
+    title: 'Pencatatan Iuran Anggota',
+    desc: 'Kelola data anggota organisasi dengan mudah. Catat iuran dan kontribusi dari setiap anggota secara terpusat.',
   },
   {
     icon: 'fa-calendar-check',
@@ -44,7 +44,7 @@ const FEATURES = [
     color: '#C62828',
     bg: 'rgba(198,40,40,0.1)',
     title: 'Notifikasi Cerdas',
-    desc: 'Dapatkan notifikasi otomatis untuk transaksi penting, jatuh tempo anggaran, dan aktivitas anggota.',
+    desc: 'Dapatkan notifikasi otomatis untuk transaksi penting dan jatuh tempo anggaran.',
   },
 ];
 
@@ -63,8 +63,8 @@ const STEPS = [
     icon: 'fa-user-plus',
     color: '#0C5272',
     bg: 'rgba(12,82,114,0.1)',
-    title: 'Tambah Anggota Tim',
-    desc: 'Undang anggota dan atur hak akses masing-masing sesuai peran dalam organisasi.',
+    title: 'Data Anggota',
+    desc: 'Masukkan data anggota organisasi dan mulai mencatat iuran atau kontribusi dari anggota.',
   },
   {
     num: '3',
