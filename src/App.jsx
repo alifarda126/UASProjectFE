@@ -7,6 +7,9 @@ import { useSessionTimeout } from './hooks/useSessionTimeout';
 import ConfirmDialog from './components/ConfirmDialog';
 import { SkeletonBeranda, SkeletonTransaksi, SkeletonLaporan, SkeletonPage, SkeletonAdminDashboard } from './components/Skeleton';
 
+// Landing
+import LandingPage        from './pages/LandingPage';
+
 // Auth — src/auth/user/
 import LoginPage          from './auth/user/LoginPage';
 import RegisterPage       from './auth/user/RegisterPage';
@@ -307,13 +310,11 @@ export default function App() {
     <ErrorBoundary>
     <Routes>
       {/* PUBLIC ROUTES */}
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/auth/callback" element={<OAuthCallback />} />
-      
-      {/* ROOT REDIRECT — arahkan ke dashboard, RequireAuth akan handle jika belum login */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
 
       {/* USER DASHBOARD ROUTES — auth guard built-in di UserLayout */}
       <Route path="/dashboard" element={<UserLayout />}>
@@ -339,7 +340,7 @@ export default function App() {
       </Route>
 
       {/* CATCH ALL 404 */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
     </ErrorBoundary>
   );

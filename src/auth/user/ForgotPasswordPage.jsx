@@ -19,10 +19,15 @@ export default function ForgotPasswordPage({ onBackToLogin }) {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState('');
 
   /* Step 1: Kirim OTP ke email */
   const step1 = async () => {
-    if (!forgotEmail || !/\S+@\S+\.\S+/.test(forgotEmail)) { showToast('Masukkan email yang valid', 'error'); return; }
+    if (!forgotEmail || !/\S+@\S+\.\S+/.test(forgotEmail)) {
+      setEmailError('Masukkan alamat email yang valid.');
+      return;
+    }
+    setEmailError('');
     setIsLoading(true);
     try {
       const { default: api } = await import('../../utils/api');
@@ -30,8 +35,14 @@ export default function ForgotPasswordPage({ onBackToLogin }) {
       setStep(2);
       showToast('Kode verifikasi telah dikirim ke email Anda', 'info');
     } catch (err) {
+      const status = err.response?.status;
       const msg = err.response?.data?.message || 'Gagal mengirim kode verifikasi';
-      showToast(msg, 'error');
+      if (status === 404) {
+        // Email tidak terdaftar — tampilkan inline error, jangan lanjut
+        setEmailError(msg);
+      } else {
+        showToast(msg, 'error');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -119,10 +130,22 @@ export default function ForgotPasswordPage({ onBackToLogin }) {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-dark mb-1.5">Email Terdaftar</label>
-                  <input type="email" placeholder="nama@organisasi.com" value={forgotEmail}
-                    onChange={(e) => setForgotEmail(e.target.value)}
+                  <input
+                    type="email"
+                    placeholder="nama@organisasi.com"
+                    value={forgotEmail}
+                    onChange={(e) => { setForgotEmail(e.target.value); setEmailError(''); }}
                     onKeyDown={(e) => e.key === 'Enter' && step1()}
-                    className="input-styled w-full px-4 py-3 border border-neutral-light rounded-xl text-sm outline-none transition-all" />
+                    className={`input-styled w-full px-4 py-3 border rounded-xl text-sm outline-none transition-all ${
+                      emailError ? 'border-red-400 bg-red-50 focus:ring-red-300' : 'border-neutral-light'
+                    }`}
+                  />
+                  {emailError && (
+                    <div className="flex items-center gap-1.5 mt-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg">
+                      <i className="fas fa-exclamation-circle text-red-500 text-xs flex-shrink-0" />
+                      <p className="text-xs text-red-600">{emailError}</p>
+                    </div>
+                  )}
                 </div>
                 <button type="button" onClick={step1} disabled={isLoading}
                   className="w-full py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
