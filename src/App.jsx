@@ -294,8 +294,8 @@ export default function App() {
   useEffect(() => {
     // Re-fetch user setelah login berhasil (misalnya OAuth callback)
     const handleLoginSuccess = () => fetchUser().catch(() => {});
-    // Redirect ke landing page setelah logout
-    const handleLogout = () => navigate('/', { replace: true });
+    // Redirect ke landing page setelah logout (gunakan window.location.href agar tidak tertimpa oleh redirect layout)
+    const handleLogout = () => { window.location.href = '/'; };
     
     window.addEventListener('auth:login_success', handleLoginSuccess);
     window.addEventListener('auth:logout', handleLogout);

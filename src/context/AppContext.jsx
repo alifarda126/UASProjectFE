@@ -266,10 +266,6 @@ export function AppProvider({ children }) {
     // ✅ Set flag logout PERTAMA agar polling fetchUser tidak memulihkan session
     isLoggingOut.current = true;
 
-    // Update background body ke gelap seketika (untuk halaman login)
-    document.documentElement.style.background = '#0A1628';
-    document.body.style.background = '#0A1628';
-
     try {
       // ✅ Tunggu API logout selesai DULU agar cookie session di backend benar-benar dihapus
       // sebelum state di-clear — mencegah polling fetchUser memulihkan session yang belum expired
