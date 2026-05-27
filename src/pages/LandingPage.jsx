@@ -453,7 +453,7 @@ export default function LandingPage() {
         <div className="landing-footer__bottom">
           <div className="landing-container landing-footer__bottom-inner">
             <span>© {new Date().getFullYear()} MoneFlo — Aplikasi Web Pengelola Keuangan Organisasi</span>
-            <span>Dibangun dengan <i className="fas fa-heart" style={{ color: '#E05C26', margin: '0 4px' }} /> Teknologi web modern</span>
+            <span>Dibangun dengan Teknologi web modern</span>
           </div>
         </div>
       </footer>
