@@ -4,6 +4,7 @@ import { useSystem } from '../../context/SystemContext';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../utils/api';
 import { getPasswordStrength, strengthColors, strengthLabels } from '../../utils/passwordStrength';
+import OtpInput from '../../components/user/OtpInput';
 
 function PwdInput({ value, onChange, placeholder, id }) {
   const [show, setShow] = useState(false);
@@ -67,7 +68,7 @@ function ActivityCard({ icon, iconBg, label, value, valueColor = 'text-slate-200
 export default function ProfilKeamananPage() {
   const showToast = useToast();
   const { settings } = useSystem();
-  const { user } = useAuth();
+  const { user, updateUser, changePassword } = useAuth();
   const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
   // Placeholder untuk data dari backend (nantinya di-fetch dari API)
@@ -191,30 +192,56 @@ export default function ProfilKeamananPage() {
 
   /* ── Forgot flow ── */
   const [forgotStep, setForgotStep] = useState(1);
-  const [verifyPass, setVerifyPass] = useState('');
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [fpNew, setFpNew] = useState('');
   const [fpConfirm, setFpConfirm] = useState('');
   const [fpSuccess, setFpSuccess] = useState(false);
+  const [isForgotLoading, setIsForgotLoading] = useState(false);
 
-  const resetForgot = () => { setForgotStep(1); setVerifyPass(''); setFpNew(''); setFpConfirm(''); setFpSuccess(false); };
+  const resetForgot = () => { setForgotStep(1); setOtp(['', '', '', '', '', '']); setFpNew(''); setFpConfirm(''); setFpSuccess(false); };
 
-  const handleForgotStep1 = () => {
-    if (!verifyPass) { showToast('Masukkan kata sandi verifikasi', 'error'); return; }
-    showToast('Verifikasi berhasil', 'success'); setForgotStep(2);
+  const handleForgotStep1 = async () => {
+    setIsForgotLoading(true);
+    try {
+      await api.post('/auth/send-otp', { email: adminEmail, action: 'forgot_password' });
+      setForgotStep(2);
+      showToast('Kode verifikasi telah dikirim ke email Anda', 'info');
+    } catch (err) {
+      showToast(err.response?.data?.message || 'Gagal mengirim kode verifikasi', 'error');
+    } finally {
+      setIsForgotLoading(false);
+    }
   };
 
   const handleForgotStep2 = async () => {
+    if (otp.join('').length < 6) { showToast('Masukkan 6 digit kode', 'error'); return; }
+    setIsForgotLoading(true);
+    try {
+      await api.post('/auth/verify-otp', { email: adminEmail, otp: otp.join('') });
+      setForgotStep(3);
+    } catch (err) {
+      showToast(err.response?.data?.message || 'Kode OTP tidak valid', 'error');
+      setOtp(['', '', '', '', '', '']);
+    } finally {
+      setIsForgotLoading(false);
+    }
+  };
+
+  const handleForgotStep3 = async () => {
     if (!fpNew || fpNew.length < 8) { showToast('Kata sandi minimal 8 karakter', 'error'); return; }
-    if (!verifyPass) { showToast('Sandi verifikasi tidak ditemukan', 'error'); return; }
     if (fpNew !== fpConfirm) { showToast('Konfirmasi tidak cocok', 'error'); return; }
     if (getPasswordStrength(fpNew) < 2) { showToast('Kata sandi terlalu lemah', 'error'); return; }
     
+    setIsForgotLoading(true);
     try {
-      await changePassword({ current_password: verifyPass, new_password: fpNew, new_password_confirmation: fpConfirm });
+      await api.post('/auth/forgot-password', { email: adminEmail, otp: otp.join(''), password: fpNew, password_confirmation: fpConfirm });
       setFpSuccess(true);
       showToast('Kata sandi berhasil diubah', 'success');
     } catch (error) {
       showToast(error.response?.data?.message || 'Gagal mengubah kata sandi', 'error');
+      if (error.response?.status === 400) setForgotStep(2);
+    } finally {
+      setIsForgotLoading(false);
     }
   };
 
@@ -307,14 +334,29 @@ export default function ProfilKeamananPage() {
 
         {passMethod === 'forgot' && !fpSuccess && forgotStep === 1 && (
           <div className="space-y-4">
-            <p className="text-sm text-slate-500 mb-2">Masukkan kata sandi akun saat ini untuk memverifikasi identitas Anda.</p>
-            <div><label className={LBL}>Verifikasi Kata Sandi</label><PwdInput value={verifyPass} onChange={setVerifyPass} placeholder="Masukkan kata sandi saat ini" /></div>
-            <button type="button" onClick={handleForgotStep1} className="w-full py-3 bg-teal-700 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold transition-all">Verifikasi &amp; Lanjutkan</button>
+            <p className="text-sm text-slate-500 mb-2">Kode verifikasi OTP akan dikirimkan ke email <strong>{adminEmail}</strong>.</p>
+            <button type="button" onClick={handleForgotStep1} disabled={isForgotLoading} className="w-full py-3 bg-teal-700 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-60">
+              {isForgotLoading ? 'Mengirim...' : 'Kirim Kode Verifikasi'}
+            </button>
             <button type="button" onClick={() => setPassMethod('old')} className="w-full text-xs text-slate-500 hover:text-slate-600 underline">Kembali</button>
           </div>
         )}
 
         {passMethod === 'forgot' && !fpSuccess && forgotStep === 2 && (
+          <div className="space-y-4">
+            <p className="text-sm text-slate-500 mb-2">Masukkan 6 digit kode OTP yang dikirim ke email Anda.</p>
+            <div>
+              <label className={LBL}>Kode Verifikasi</label>
+              <OtpInput value={otp} onChange={setOtp} />
+            </div>
+            <button type="button" onClick={handleForgotStep2} disabled={isForgotLoading || otp.join('').length < 6} className="w-full py-3 bg-teal-700 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-60 mt-2">
+              {isForgotLoading ? 'Memverifikasi...' : 'Verifikasi Kode'}
+            </button>
+            <button type="button" onClick={resetForgot} className="w-full text-xs text-slate-500 hover:text-slate-600 underline">Batal</button>
+          </div>
+        )}
+
+        {passMethod === 'forgot' && !fpSuccess && forgotStep === 3 && (
           <div className="space-y-4">
             <p className="text-sm text-slate-500 mb-2">Verifikasi berhasil. Buat kata sandi baru Anda.</p>
             <div><label className={LBL}>Kata Sandi Baru</label><PwdInput value={fpNew} onChange={setFpNew} placeholder="Minimal 8 karakter" /><StrengthBar pass={fpNew} /></div>
@@ -323,7 +365,9 @@ export default function ProfilKeamananPage() {
               <PwdInput value={fpConfirm} onChange={setFpConfirm} placeholder="Ulangi kata sandi baru" />
               {fpConfirm && <div className={`text-xs px-3 py-2 rounded-lg mt-1 ${fpNew === fpConfirm ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}><i className={`fas fa-${fpNew === fpConfirm ? 'check' : 'times'}-circle mr-1`} />{fpNew === fpConfirm ? 'Cocok' : 'Tidak cocok'}</div>}
             </div>
-            <button type="button" onClick={handleForgotStep2} className="w-full py-3 bg-teal-700 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold transition-all">Simpan Kata Sandi Baru</button>
+            <button type="button" onClick={handleForgotStep3} disabled={isForgotLoading} className="w-full py-3 bg-teal-700 hover:bg-teal-600 text-white rounded-xl text-sm font-semibold transition-all disabled:opacity-60">
+              {isForgotLoading ? 'Menyimpan...' : 'Simpan Kata Sandi Baru'}
+            </button>
             <button type="button" onClick={resetForgot} className="w-full text-xs text-slate-500 hover:text-slate-600 underline">Batal</button>
           </div>
         )}
