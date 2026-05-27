@@ -109,7 +109,7 @@ function AdminLayout() {
     onTimeout: () => { setShowTimeoutWarn(false); logout(); },
   });
 
-  if (!isLoading && !isAuthenticated) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!isLoading && !isAuthenticated) return <Navigate to="/" replace />;
   if (!isLoading && !isAdmin)         return <Navigate to="/dashboard" replace />;
 
   return (
@@ -159,14 +159,14 @@ function UserLayout() {
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        navigate('/login', { state: { from: location }, replace: true });
+        navigate('/', { replace: true });
       } else if (organisasi?.is_suspended) {
         navigate('/dashboard/suspended', { replace: true });
       } else if (organisasi?.is_active === false) {
         navigate('/dashboard/deactivated', { replace: true });
       }
     }
-  }, [isLoading, isAuthenticated, organisasi?.is_suspended, organisasi?.is_active, navigate, location]);
+  }, [isLoading, isAuthenticated, organisasi?.is_suspended, organisasi?.is_active, navigate]);
 
 
 
@@ -236,12 +236,12 @@ function RequireSuspendedPage() {
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        navigate('/login', { state: { from: location }, replace: true });
+        navigate('/', { replace: true });
       } else if (!organisasi?.is_suspended) {
         navigate('/dashboard', { replace: true });
       }
     }
-  }, [isLoading, isAuthenticated, organisasi?.is_suspended, navigate, location]);
+  }, [isLoading, isAuthenticated, organisasi?.is_suspended, navigate]);
 
   if (isLoading) {
     return <SkeletonPage />;
@@ -264,14 +264,14 @@ function RequireDeactivatedPage() {
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
-        navigate('/login', { state: { from: location }, replace: true });
+        navigate('/', { replace: true });
       } else if (organisasi?.is_suspended) {
         navigate('/dashboard/suspended', { replace: true });
       } else if (organisasi?.is_active !== false) {
         navigate('/dashboard', { replace: true });
       }
     }
-  }, [isLoading, isAuthenticated, organisasi?.is_suspended, organisasi?.is_active, navigate, location]);
+  }, [isLoading, isAuthenticated, organisasi?.is_suspended, organisasi?.is_active, navigate]);
 
   if (isLoading) {
     return <SkeletonPage />;
