@@ -10,8 +10,8 @@
  *   disabled    : boolean
  */
 import { useRef, useState, useCallback } from 'react';
-import api from '../../utils/api';
-import { useToast } from '../../context/ToastContext';
+import api from '../utils/api';
+import { useToast } from '../context/ToastContext';
 
 // Batas ukuran (harus sama dengan backend UploadController.php)
 const IMAGE_MAX_MB = 2;
