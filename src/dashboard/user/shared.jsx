@@ -227,8 +227,8 @@ export function BuktiViewerModal({ txn, onClose }) {
   const [activeIdx, setActiveIdx] = useState(null);
   if (!txn) return null;
 
-  const getName    = (d) => typeof d === 'string' ? d : d.name;
-  const getUrl     = (d) => typeof d === 'object' ? d.dataUrl : null;
+  const getName    = (d) => typeof d === 'string' ? d : (d.name || '');
+  const getUrl     = (d) => typeof d === 'object' ? (d.url || d.dataUrl) : null;
   const isImgName  = (n) => /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(n);
   const isPdfName  = (n) => /\.pdf$/i.test(n);
 
