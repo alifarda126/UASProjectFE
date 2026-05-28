@@ -92,19 +92,19 @@ export default function ProfilPage() {
         <div className="px-6 pb-6 -mt-12 relative">
           <div className="flex flex-col sm:flex-row items-start gap-5">
             {/* Profile photo */}
-            <div className="profile-photo-wrap bg-primary-light flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 ring-4 ring-white shadow-lg"
-              onClick={() => document.getElementById('profile-photo-input').click()}>
-              {(organisasi?.logo_url || profile.photo)
-                ? <img src={organisasi?.logo_url || profile.photo} alt="" className="w-full h-full object-cover" />
-                : <span>{initials}</span>
-              }
-              <div className="profile-photo-overlay">
-                <i className="fas fa-camera text-white text-lg mb-1" />
-                <span className="text-white text-[10px] font-medium">Ubah Logo</span>
-                <span className="text-white/70 text-[9px]">JPG/PNG/WEBP · maks. 2MB</span>
+              <div className="profile-photo-wrap bg-primary-light flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 ring-4 ring-white shadow-lg group"
+                title="Klik untuk mengubah logo (JPG/PNG/WEBP - maks. 2MB)"
+                onClick={() => document.getElementById('profile-photo-input').click()}>
+                {(organisasi?.logo_url || profile.photo)
+                  ? <img src={organisasi?.logo_url || profile.photo} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  : <span>{initials}</span>
+                }
+                <div className="profile-photo-overlay backdrop-blur-[2px]">
+                  <i className="fas fa-camera text-white text-2xl mb-1" />
+                  <span className="text-white text-xs font-semibold">Ubah Logo</span>
+                </div>
+                <input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/jpg,image/webp" className="hidden" onChange={handlePhoto} />
               </div>
-              <input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/jpg,image/webp" className="hidden" onChange={handlePhoto} />
-            </div>
             {/* Tombol hapus logo — hanya muncul jika ada logo */}
             {(organisasi?.logo_url || profile.photo) && (
               <button
