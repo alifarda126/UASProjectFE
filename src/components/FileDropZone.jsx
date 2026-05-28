@@ -53,6 +53,7 @@ export default function FileDropZone({
   const [isDrag,     setIsDrag]     = useState(false);
   const [uploading,  setUploading]  = useState(false);
   const [uploadPct,  setUploadPct]  = useState(0);
+  const [viewIndex,  setViewIndex]  = useState(null);
 
   const totalFiles = files.length;
   const canAddMore = totalFiles < maxFiles && !disabled;
@@ -155,48 +156,70 @@ export default function FileDropZone({
             const isOldB64 = fileUrl?.startsWith('data:');
 
             return (
-              <div key={i}
-                className="group flex items-center gap-3 p-3 bg-white border border-neutral-light/60
+              <div key={i} className="flex flex-col gap-2">
+                <div className="group flex items-center gap-3 p-3 bg-white border border-neutral-light/60
                            rounded-xl hover:border-tertiary/40 hover:shadow-sm transition-all">
-                {/* Icon / Preview mini */}
-                <div className="w-9 h-9 rounded-lg bg-neutral-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
-                  {isImg && fileUrl ? (
-                    <img src={fileUrl} alt={f.name} className="w-full h-full object-cover rounded-lg" />
-                  ) : (
-                    <i className={`fas ${icon} text-sm`} />
+                  {/* Icon / Preview mini */}
+                  <div className="w-9 h-9 rounded-lg bg-neutral-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    {isImg && fileUrl ? (
+                      <img src={fileUrl} alt={f.name} className="w-full h-full object-cover rounded-lg" />
+                    ) : (
+                      <i className={`fas ${icon} text-sm`} />
+                    )}
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-neutral-dark truncate">{f.name || 'File'}</p>
+                    <p className="text-[11px] text-neutral mt-0.5">
+                      {f.size ? formatBytes(f.size) : ''}
+                      {isOldB64 && <span className="text-amber-500"> · Tersimpan (lama)</span>}
+                    </p>
+                  </div>
+
+                  {/* Status badge */}
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full
+                                   bg-emerald-50 text-emerald-600 flex-shrink-0 hidden group-hover:hidden">
+                    ✓
+                  </span>
+
+                  {/* Tombol Lihat Pratinjau */}
+                  {fileUrl && (
+                    <button type="button" onClick={() => setViewIndex(viewIndex === i ? null : i)}
+                      title="Pratinjau"
+                      className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors flex-shrink-0
+                                  ${viewIndex === i ? 'bg-tertiary/10 text-tertiary' : 'text-neutral-light hover:text-primary hover:bg-primary/10'}`}>
+                      <i className={`fas ${viewIndex === i ? 'fa-eye-slash' : 'fa-eye'} text-xs`} />
+                    </button>
+                  )}
+
+                  {/* Tombol Buka di Tab Baru */}
+                  {fileUrl && (
+                    <a href={fileUrl} target="_blank" rel="noopener noreferrer" title="Buka di tab baru"
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-neutral-light hover:text-primary hover:bg-primary/10 transition-colors flex-shrink-0">
+                      <i className="fas fa-external-link-alt text-xs" />
+                    </a>
+                  )}
+
+                  {/* Tombol hapus */}
+                  {!disabled && (
+                    <button type="button" onClick={() => { onRemove?.(i); if (viewIndex === i) setViewIndex(null); }}
+                      className="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center
+                                 text-neutral-light hover:text-red-500 transition-colors flex-shrink-0">
+                      <i className="fas fa-times text-xs" />
+                    </button>
                   )}
                 </div>
 
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-neutral-dark truncate">{f.name || 'File'}</p>
-                  <p className="text-[11px] text-neutral mt-0.5">
-                    {f.size ? formatBytes(f.size) : ''}
-                    {!isOldB64 && fileUrl && (
-                      <>
-                        {' · '}
-                        <a href={fileUrl} target="_blank" rel="noopener noreferrer"
-                          className="text-tertiary hover:underline" onClick={(e) => e.stopPropagation()}>
-                          Lihat
-                        </a>
-                      </>
+                {/* AREA PRATINJAU DOKUMEN */}
+                {viewIndex === i && fileUrl && (
+                  <div className="p-3 bg-neutral-50 border border-neutral-light/50 rounded-xl mb-1 animate-in fade-in slide-in-from-top-2">
+                    <p className="text-xs font-semibold text-neutral mb-2 truncate">{f.name || 'Pratinjau Dokumen'}</p>
+                    {isImg ? (
+                      <img src={fileUrl} alt="Preview" className="w-full h-auto rounded-lg border border-neutral-light/30 shadow-sm" />
+                    ) : (
+                      <iframe src={fileUrl} className="w-full h-72 rounded-lg border border-neutral-light/50 shadow-sm bg-white" title="Doc Preview" />
                     )}
-                    {isOldB64 && <span className="text-amber-500"> · Tersimpan (lama)</span>}
-                  </p>
-                </div>
-
-                {/* Status badge */}
-                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full
-                                 bg-emerald-50 text-emerald-600 flex-shrink-0 hidden group-hover:hidden">
-                  ✓
-                </span>
-
-                {/* Tombol hapus */}
-                {!disabled && (
-                  <button type="button" onClick={() => onRemove?.(i)}
-                    className="w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center
-                               text-neutral-light hover:text-red-500 transition-colors flex-shrink-0">
-                    <i className="fas fa-times text-xs" />
-                  </button>
+                  </div>
                 )}
               </div>
             );
