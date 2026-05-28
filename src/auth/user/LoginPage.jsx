@@ -73,17 +73,9 @@ export default function LoginPage() {
 
       showToast('Berhasil masuk!', 'success');
       
-      // Dispatch event global supaya AppContext nge-fetch ulang user (atau redirect lgsg)
+      // Dispatch event global supaya App.jsx fetch ulang user lalu redirect ke dashboard
       window.dispatchEvent(new CustomEvent('auth:login_success'));
-      
-      // Tunggu sebentar supaya state auth ke-update
-      setTimeout(() => {
-        if (response.data.user.role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
-        }
-      }, 500);
+
 
     } catch (error) {
       const msg = error.response?.data?.message || 'Terjadi kesalahan saat login';

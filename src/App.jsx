@@ -292,8 +292,17 @@ export default function App() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Re-fetch user setelah login berhasil (misalnya OAuth callback)
-    const handleLoginSuccess = () => fetchUser().catch(() => {});
+    // Re-fetch user setelah login berhasil, lalu redirect sesuai role
+    const handleLoginSuccess = () =>
+      fetchUser()
+        .then((data) => {
+          if (data?.user?.role === 'admin') {
+            navigate('/admin', { replace: true });
+          } else {
+            navigate('/dashboard', { replace: true });
+          }
+        })
+        .catch(() => {});
     // Redirect ke landing page setelah logout (gunakan window.location.href agar tidak tertimpa oleh redirect layout)
     const handleLogout = () => { window.location.href = '/'; };
     
