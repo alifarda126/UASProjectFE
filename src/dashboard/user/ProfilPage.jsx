@@ -46,8 +46,18 @@ export default function ProfilPage() {
   const handlePhoto = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) { showToast('Hanya file gambar yang diizinkan', 'error'); return; }
-    if (file.size > 5 * 1024 * 1024) { showToast('Ukuran maksimal 5MB', 'error'); return; }
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      showToast('Format tidak didukung. Gunakan JPG, PNG, atau WEBP', 'error');
+      e.target.value = '';
+      return;
+    }
+    // Batas logo: maks. 2MB
+    if (file.size > 2 * 1024 * 1024) {
+      showToast('Ukuran logo maksimal 2MB', 'error');
+      e.target.value = '';
+      return;
+    }
     try {
       await uploadOrgLogo(file);
       showToast('Logo berhasil diperbarui', 'success');
@@ -91,8 +101,9 @@ export default function ProfilPage() {
               <div className="profile-photo-overlay">
                 <i className="fas fa-camera text-white text-lg mb-1" />
                 <span className="text-white text-[10px] font-medium">Ubah Logo</span>
+                <span className="text-white/70 text-[9px]">JPG/PNG/WEBP · maks. 2MB</span>
               </div>
-              <input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/jpg" className="hidden" onChange={handlePhoto} />
+              <input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/jpg,image/webp" className="hidden" onChange={handlePhoto} />
             </div>
             {/* Tombol hapus logo — hanya muncul jika ada logo */}
             {(organisasi?.logo_url || profile.photo) && (
