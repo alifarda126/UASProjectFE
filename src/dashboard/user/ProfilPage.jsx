@@ -106,8 +106,8 @@ export default function ProfilPage() {
                   <input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/jpg,image/webp" className="hidden" onChange={handlePhoto} />
                 </div>
                 {/* Custom Tooltip */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-max px-4 py-2 bg-white text-neutral-dark text-xs font-medium rounded-lg shadow-[0_8px_25px_rgba(0,0,0,0.12)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pointer-events-none z-50 border border-neutral-light/30">
-                  <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-t border-l border-neutral-light/30 transform rotate-45"></div>
+                <div className="absolute top-full left-0 mt-4 w-max px-4 py-2 bg-white text-neutral-dark text-xs font-medium rounded-lg shadow-[0_8px_25px_rgba(0,0,0,0.12)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pointer-events-none z-50 border border-neutral-light/30">
+                  <div className="absolute -top-1.5 left-[60px] -translate-x-1/2 w-3 h-3 bg-white border-t border-l border-neutral-light/30 transform rotate-45"></div>
                   <span className="relative z-10 whitespace-nowrap">Klik untuk mengubah logo (JPG/PNG/WEBP - maks. 2MB)</span>
                 </div>
               </div>
