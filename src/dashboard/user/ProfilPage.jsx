@@ -92,18 +92,24 @@ export default function ProfilPage() {
         <div className="px-6 pb-6 -mt-12 relative">
           <div className="flex flex-col sm:flex-row items-start gap-5">
             {/* Profile photo */}
-              <div className="profile-photo-wrap bg-primary-light flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 ring-4 ring-white shadow-lg group"
-                title="Klik untuk mengubah logo (JPG/PNG/WEBP - maks. 2MB)"
-                onClick={() => document.getElementById('profile-photo-input').click()}>
-                {(organisasi?.logo_url || profile.photo)
-                  ? <img src={organisasi?.logo_url || profile.photo} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                  : <span>{initials}</span>
-                }
-                <div className="profile-photo-overlay backdrop-blur-[2px]">
-                  <i className="fas fa-camera text-white text-2xl mb-1" />
-                  <span className="text-white text-xs font-semibold">Ubah Logo</span>
+              <div className="relative group w-max">
+                <div className="profile-photo-wrap bg-primary-light flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 ring-4 ring-white shadow-lg"
+                  onClick={() => document.getElementById('profile-photo-input').click()}>
+                  {(organisasi?.logo_url || profile.photo)
+                    ? <img src={organisasi?.logo_url || profile.photo} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    : <span>{initials}</span>
+                  }
+                  <div className="profile-photo-overlay backdrop-blur-[2px]">
+                    <i className="fas fa-camera text-white text-2xl mb-1" />
+                    <span className="text-white text-xs font-semibold">Ubah Logo</span>
+                  </div>
+                  <input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/jpg,image/webp" className="hidden" onChange={handlePhoto} />
                 </div>
-                <input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/jpg,image/webp" className="hidden" onChange={handlePhoto} />
+                {/* Custom Tooltip */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-max px-4 py-2 bg-white text-neutral-dark text-xs font-medium rounded-lg shadow-[0_8px_25px_rgba(0,0,0,0.12)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pointer-events-none z-50 border border-neutral-light/30">
+                  <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-t border-l border-neutral-light/30 transform rotate-45"></div>
+                  <span className="relative z-10 whitespace-nowrap">Klik untuk mengubah logo (JPG/PNG/WEBP - maks. 2MB)</span>
+                </div>
               </div>
             {/* Tombol hapus logo — hanya muncul jika ada logo */}
             {(organisasi?.logo_url || profile.photo) && (
