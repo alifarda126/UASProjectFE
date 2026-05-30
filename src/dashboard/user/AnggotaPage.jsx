@@ -63,14 +63,14 @@ export default function AnggotaPage() {
   const showToast = useToast();
 
   const [form, setForm] = useState({ name: '', nim: '', phone: '' });
-  const [duesDays,    setDuesDays]   = useState(state.duesSettings.interval);
-  const [duesAmount,  setDuesAmount] = useState(state.duesSettings.amount);
+  const [duesDays, setDuesDays] = useState(state.duesSettings.interval);
+  const [duesAmount, setDuesAmount] = useState(state.duesSettings.amount);
   const [isRecording, setIsRecording] = useState(false);
-  const [isAdding,    setIsAdding]   = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   // State untuk confirm dialog hapus anggota
   const [confirmMemberId, setConfirmMemberId] = useState(null);
-  const [isDeleting,      setIsDeleting]      = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const setF = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -139,12 +139,12 @@ export default function AnggotaPage() {
       ...m,
       status: getMemberStatus(m, state.duesSettings, state.transactions),
     })),
-  [state.members, state.duesSettings, state.transactions]);
+    [state.members, state.duesSettings, state.transactions]);
 
-  const paidCount     = state.members.filter((m) => m.isPaid).length;
-  const dicatatCount  = membersWithStatus.filter(m => m.status === 'dicatat').length;
-  const skipCount     = state.members.length - dicatatCount;
-  const period        = getActivePeriod(state.duesSettings);
+  const paidCount = state.members.filter((m) => m.isPaid).length;
+  const dicatatCount = membersWithStatus.filter(m => m.status === 'dicatat').length;
+  const skipCount = state.members.length - dicatatCount;
+  const period = getActivePeriod(state.duesSettings);
   const hasDuesConfigured = state.duesSettings.hasSaved === true;
 
   return (
@@ -185,7 +185,7 @@ export default function AnggotaPage() {
           </div>
           <div>
             <label className="block text-xs font-semibold text-neutral uppercase tracking-wider mb-1.5">Nominal (Rp)</label>
-            <input type="number" value={duesAmount} onChange={(e) => setDuesAmount(e.target.value)}
+            <input type="number" step="1000" value={duesAmount} onChange={(e) => setDuesAmount(e.target.value)}
               className="input-styled w-full px-4 py-2.5 border border-neutral-light rounded-xl text-sm outline-none transition-all" />
           </div>
         </div>
@@ -278,9 +278,9 @@ export default function AnggotaPage() {
                   <tr><td colSpan="6" className="py-8 text-center text-neutral text-sm">Belum ada anggota</td></tr>
                 ) : membersWithStatus.map((m) => {
                   const statusCfg = {
-                    dicatat:   { label: 'Sudah Dicatat', cls: 'bg-tertiary-50 text-tertiary', dot: 'bg-tertiary' },
-                    terlambat: { label: 'Terlambat',     cls: 'bg-red-50 text-red-500',       dot: 'bg-red-400' },
-                    belum:     { label: 'Belum Bayar',   cls: 'bg-amber-50 text-amber-600',   dot: 'bg-amber-400' },
+                    dicatat: { label: 'Sudah Dicatat', cls: 'bg-tertiary-50 text-tertiary', dot: 'bg-tertiary' },
+                    terlambat: { label: 'Terlambat', cls: 'bg-red-50 text-red-500', dot: 'bg-red-400' },
+                    belum: { label: 'Belum Bayar', cls: 'bg-amber-50 text-amber-600', dot: 'bg-amber-400' },
                   }[m.status] || { label: 'Belum Bayar', cls: 'bg-amber-50 text-amber-600', dot: 'bg-amber-400' };
 
                   return (
