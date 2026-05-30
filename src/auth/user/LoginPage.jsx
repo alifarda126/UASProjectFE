@@ -11,7 +11,7 @@ export default function LoginPage() {
   const showToast = useToast();
   const navigate = useNavigate();
   const { settings: sys } = useSystem();
-  const { loginWithGoogle, isAuthenticated, user } = useAuth();
+  const { loginWithGoogle, isAuthenticated, user, fetchUser } = useAuth();
   
   const logoSrc = sys.logoUrl || logoProject;
 
@@ -71,19 +71,18 @@ export default function LoginPage() {
         localStorage.removeItem('moneflo_remembered_email');
       }
 
+      // Panggil fetchUser() langsung agar state auth terupdate sebelum navigate.
+      // Ini menghindari race condition di mana UserLayout melihat isAuthenticated=false
+      // dan me-redirect ke landing page sebelum state sempat terupdate.
+      await fetchUser();
+
       showToast('Berhasil masuk!', 'success');
-      
-      // Dispatch event global supaya AppContext nge-fetch ulang user (atau redirect lgsg)
-      window.dispatchEvent(new CustomEvent('auth:login_success'));
-      
-      // Tunggu sebentar supaya state auth ke-update
-      setTimeout(() => {
-        if (response.data.user.role === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/dashboard');
-        }
-      }, 500);
+
+      if (response.data.user.role === 'admin') {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
 
     } catch (error) {
       const msg = error.response?.data?.message || 'Terjadi kesalahan saat login';
