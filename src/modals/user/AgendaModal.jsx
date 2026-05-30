@@ -1,4 +1,4 @@
-/* ── KOMPONEN MODAL: Form tambah/edit agenda (User) ── */
+/* KOMPONEN MODAL: Form tambah/edit agenda (User)  */
 import { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';

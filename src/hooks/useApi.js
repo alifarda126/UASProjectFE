@@ -1,4 +1,4 @@
-/* ── CUSTOM HOOK: useApi — wrapper untuk API calls dengan loading dan error state ── */
+/* CUSTOM HOOK: useApi — wrapper untuk API calls dengan loading dan error state  */
 import { useState, useCallback } from 'react';
 import api from '../utils/api';
 

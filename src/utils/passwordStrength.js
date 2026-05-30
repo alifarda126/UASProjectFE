@@ -1,4 +1,4 @@
-/* ── FUNGSI UTILITY: Pengecekan kekuatan kata sandi ── */
+/* FUNGSI UTILITY: Pengecekan kekuatan kata sandi  */
 export function getPasswordStrength(pw) {
   if (!pw) return -1;
   let s = 0;

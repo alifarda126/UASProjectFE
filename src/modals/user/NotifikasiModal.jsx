@@ -1,4 +1,4 @@
-/* ── KOMPONEN MODAL: Menampilkan daftar pemberitahuan (User) ── */
+/* KOMPONEN MODAL: Menampilkan daftar pemberitahuan (User)  */
 import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';
 import Modal from '../../components/user/Modal';

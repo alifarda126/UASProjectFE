@@ -1,4 +1,4 @@
-/* ── KOMPONEN REUSABLE: Bar indikator kekuatan kata sandi ── */
+/* KOMPONEN REUSABLE: Bar indikator kekuatan kata sandi  */
 import { STRENGTH_COLORS, STRENGTH_LABELS } from '../../utils/passwordUtils';
 
 /**

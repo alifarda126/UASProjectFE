@@ -1,4 +1,4 @@
-/* ── KOMPONEN MODAL: Konfirmasi Suspend Organisasi (Admin) ── */
+/* KOMPONEN MODAL: Konfirmasi Suspend Organisasi (Admin)  */
 /* Admin wajib mengisi pesan suspend yang akan terkirim sebagai notifikasi ke creator organisasi */
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';

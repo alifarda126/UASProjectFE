@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useSystem } from '../../context/SystemContext';
 import defaultLogo2 from '../../assets/MoneFloLogo2.png';
 
-/* ── KONSTANTA: Daftar menu navigasi untuk sidebar Admin ── */
+/* KONSTANTA: Daftar menu navigasi untuk sidebar Admin  */
 const NAV = [
   { key: 'dashboard',  icon: 'fa-gauge-high',   label: 'Dashboard',         path: '/admin' },
   { key: 'organisasi', icon: 'fa-sitemap',       label: 'Organisasi',        path: '/admin/organisasi' },
@@ -11,7 +11,7 @@ const NAV = [
   { key: 'pengaturan', icon: 'fa-user-shield',   label: 'Profil & Keamanan', path: '/admin/pengaturan' },
 ];
 
-/* ── KOMPONEN UTAMA: Layout Sidebar khusus Admin ── */
+/* KOMPONEN UTAMA: Layout Sidebar khusus Admin  */
 /* Menerima props untuk mengontrol state buka/tutup di mobile (isOpen, onToggle) */
 export default function AdminSidebar({ isOpen, onToggle }) {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function AdminSidebar({ isOpen, onToggle }) {
 
   return (
     <>
-      {/* ── OVERLAY MOBILE: Latar belakang redup saat sidebar terbuka di layar kecil ── */}
+      {/* OVERLAY MOBILE: Latar belakang redup saat sidebar terbuka di layar kecil  */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
@@ -30,7 +30,7 @@ export default function AdminSidebar({ isOpen, onToggle }) {
 
       <aside className={`sidebar bg-primary ${isOpen ? 'open' : ''}`}>
 
-        {/* ── BAGIAN ATAS: Logo & Nama Sistem ── */}
+        {/* BAGIAN ATAS: Logo & Nama Sistem  */}
         <div className="px-6 py-5 border-b border-white/10 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -43,7 +43,7 @@ export default function AdminSidebar({ isOpen, onToggle }) {
           </div>
         </div>
 
-        {/* ── BAGIAN TENGAH: Menu Navigasi ── */}
+        {/* BAGIAN TENGAH: Menu Navigasi  */}
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
           {NAV.map(({ key, icon, label, path }) => (
             <NavLink
@@ -63,7 +63,7 @@ export default function AdminSidebar({ isOpen, onToggle }) {
           ))}
         </nav>
 
-        {/* ── BAGIAN BAWAH: Info User Aktif (Admin) ── */}
+        {/* BAGIAN BAWAH: Info User Aktif (Admin)  */}
         <div className="px-4 pb-5 flex-shrink-0">
           <div className="org-card-clickable bg-white/10 rounded-xl p-3.5">
             <div className="flex items-center gap-3">

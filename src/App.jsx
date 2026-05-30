@@ -1,4 +1,4 @@
-/* ── KOMPONEN UTAMA (ROOT): Menangani routing aplikasi ── */
+/* KOMPONEN UTAMA (ROOT): Menangani routing aplikasi  */
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useApp } from './context/AppContext';
@@ -102,7 +102,7 @@ function AdminLayout() {
   const [showTimeoutWarn, setShowTimeoutWarn] = useState(false);
   const currentPage = location.pathname.split('/').pop() || 'dashboard';
 
-  // ✅ Session timeout — 30 menit tidak aktif
+  // Session timeout — 30 menit tidak aktif
   useSessionTimeout({
     enabled: isAuthenticated,
     onWarning: () => setShowTimeoutWarn(true),
@@ -124,7 +124,7 @@ function AdminLayout() {
         </div>
       </div>
 
-      {/* ── Session Timeout Warning ── */}
+      {/* Session Timeout Warning  */}
       <ConfirmDialog
         isOpen={showTimeoutWarn}
         title="Sesi Akan Berakhir"
@@ -149,7 +149,7 @@ function UserLayout() {
   const navigate = useNavigate();
   const [showTimeoutWarn, setShowTimeoutWarn] = useState(false);
 
-  // ✅ Session timeout — 30 menit tidak aktif
+  // Session timeout — 30 menit tidak aktif
   useSessionTimeout({
     enabled: isAuthenticated,
     onWarning: () => setShowTimeoutWarn(true),
@@ -211,7 +211,7 @@ function UserLayout() {
       <NotifikasiModal      isOpen={modals.notif}    onClose={() => closeModal('notif')} />
       <OrgInfoModal         isOpen={modals.orgInfo}  onClose={() => closeModal('orgInfo')} />
 
-      {/* ── Session Timeout Warning ── */}
+      {/* Session Timeout Warning  */}
       <ConfirmDialog
         isOpen={showTimeoutWarn}
         title="Sesi Akan Berakhir"
@@ -292,17 +292,8 @@ export default function App() {
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Re-fetch user setelah login berhasil, lalu redirect sesuai role
-    const handleLoginSuccess = () =>
-      fetchUser()
-        .then((data) => {
-          if (data?.user?.role === 'admin') {
-            navigate('/admin', { replace: true });
-          } else {
-            navigate('/dashboard', { replace: true });
-          }
-        })
-        .catch(() => {});
+    // Re-fetch user setelah login berhasil (misalnya OAuth callback)
+    const handleLoginSuccess = () => fetchUser().catch(() => {});
     // Redirect ke landing page setelah logout (gunakan window.location.href agar tidak tertimpa oleh redirect layout)
     const handleLogout = () => { window.location.href = '/'; };
     

@@ -7,7 +7,7 @@ import PasswordStrengthBars from '../../components/user/PasswordStrengthBars';
 import CustomSelect from '../../components/user/CustomSelect';
 import { getPasswordStrength } from '../../utils/passwordUtils';
 import logoProject from '../../assets/MoneFloLogo.png';
-/* ── KOMPONEN UTAMA: Halaman Registrasi (Daftar Organisasi Baru) ── */
+/* KOMPONEN UTAMA: Halaman Registrasi (Daftar Organisasi Baru)  */
 /* Terdiri dari 3 langkah: Isi Data, Verifikasi OTP, dan Berhasil */
 export default function RegisterPage({ onShowLogin }) {
   const showToast = useToast();
@@ -40,7 +40,7 @@ export default function RegisterPage({ onShowLogin }) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  /* ── FUNGSI HANDLER STEP 1 ── */
+  /* FUNGSI HANDLER STEP 1  */
   const handleRegister = () => {
     if (!form.name || !form.type || !form.email || !form.phone) {
       showToast('Lengkapi semua data wajib', 'error'); return;
@@ -107,7 +107,7 @@ export default function RegisterPage({ onShowLogin }) {
     }
   };
 
-  /* ── FUNGSI HANDLER STEP 2: Memvalidasi kode OTP 6 digit & Hit API Registrasi ── */
+  /* FUNGSI HANDLER STEP 2: Memvalidasi kode OTP 6 digit & Hit API Registrasi  */
   const handleVerifyOtp = async () => {
     if (otp.join('').length < 6) { showToast('Masukkan 6 digit kode', 'error'); return; }
     

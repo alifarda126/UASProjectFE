@@ -1,4 +1,4 @@
-/* ── KOMPONEN MODAL: Mengedit alokasi dana program (User) ── */
+/* KOMPONEN MODAL: Mengedit alokasi dana program (User)  */
 import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';

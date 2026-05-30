@@ -5,7 +5,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../context/ToastContext';
 import { getInitials } from '../../utils/formatters';
 
-/* ── KOMPONEN UTAMA: Halaman Profil Organisasi (User) ── */
+/* KOMPONEN UTAMA: Halaman Profil Organisasi (User)  */
 /* Tempat pengurus melihat dan mengubah data publik organisasi (nama, jenis, logo, deskripsi) */
 export default function ProfilPage() {
   const navigate = useNavigate();
@@ -46,18 +46,8 @@ export default function ProfilPage() {
   const handlePhoto = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      showToast('Format tidak didukung. Gunakan JPG, PNG, atau WEBP', 'error');
-      e.target.value = '';
-      return;
-    }
-    // Batas logo: maks. 2MB
-    if (file.size > 2 * 1024 * 1024) {
-      showToast('Ukuran logo maksimal 2MB', 'error');
-      e.target.value = '';
-      return;
-    }
+    if (!file.type.startsWith('image/')) { showToast('Hanya file gambar yang diizinkan', 'error'); return; }
+    if (file.size > 5 * 1024 * 1024) { showToast('Ukuran maksimal 5MB', 'error'); return; }
     try {
       await uploadOrgLogo(file);
       showToast('Logo berhasil diperbarui', 'success');
@@ -92,25 +82,18 @@ export default function ProfilPage() {
         <div className="px-6 pb-6 -mt-12 relative">
           <div className="flex flex-col sm:flex-row items-start gap-5">
             {/* Profile photo */}
-              <div className="relative group w-max">
-                <div className="profile-photo-wrap bg-primary-light flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 ring-4 ring-white shadow-lg"
-                  onClick={() => document.getElementById('profile-photo-input').click()}>
-                  {(organisasi?.logo_url || profile.photo)
-                    ? <img src={organisasi?.logo_url || profile.photo} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    : <span>{initials}</span>
-                  }
-                  <div className="profile-photo-overlay backdrop-blur-[2px]">
-                    <i className="fas fa-camera text-white text-2xl mb-1" />
-                    <span className="text-white text-xs font-semibold">Ubah Logo</span>
-                  </div>
-                  <input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/jpg,image/webp" className="hidden" onChange={handlePhoto} />
-                </div>
-                {/* Custom Tooltip */}
-                <div className="absolute top-full left-0 mt-4 w-max px-4 py-2 bg-white text-neutral-dark text-xs font-medium rounded-lg shadow-[0_8px_25px_rgba(0,0,0,0.12)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pointer-events-none z-50 border border-neutral-light/30">
-                  <div className="absolute -top-1.5 left-[60px] -translate-x-1/2 w-3 h-3 bg-white border-t border-l border-neutral-light/30 transform rotate-45"></div>
-                  <span className="relative z-10 whitespace-nowrap">Klik untuk mengubah logo (JPG/PNG/WEBP - maks. 2MB)</span>
-                </div>
+            <div className="profile-photo-wrap bg-primary-light flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 ring-4 ring-white shadow-lg"
+              onClick={() => document.getElementById('profile-photo-input').click()}>
+              {(organisasi?.logo_url || profile.photo)
+                ? <img src={organisasi?.logo_url || profile.photo} alt="" className="w-full h-full object-cover" />
+                : <span>{initials}</span>
+              }
+              <div className="profile-photo-overlay">
+                <i className="fas fa-camera text-white text-lg mb-1" />
+                <span className="text-white text-[10px] font-medium">Ubah Logo</span>
               </div>
+              <input type="file" id="profile-photo-input" accept="image/jpeg,image/png,image/jpg" className="hidden" onChange={handlePhoto} />
+            </div>
             {/* Tombol hapus logo — hanya muncul jika ada logo */}
             {(organisasi?.logo_url || profile.photo) && (
               <button

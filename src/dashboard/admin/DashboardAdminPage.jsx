@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '../../context/ToastContext';
 import { SkeletonAdminDashboard } from '../../components/Skeleton';
 
-/* ── SUB-KOMPONEN: Kartu Statistik Kecil ── */
+/* SUB-KOMPONEN: Kartu Statistik Kecil  */
 /* Digunakan untuk menampilkan angka ringkasan seperti total organisasi, total anggota, dll */
 function StatCard({ icon, iconBg, label, value, sub, trend }) {
   return (
@@ -30,7 +30,7 @@ function StatCard({ icon, iconBg, label, value, sub, trend }) {
   );
 }
 
-/* ── SUB-KOMPONEN: Progress Bar Status Organisasi ── */
+/* SUB-KOMPONEN: Progress Bar Status Organisasi  */
 /* Menampilkan persentase jumlah organisasi berdasarkan statusnya (Aktif, Pending, Non-aktif, Tersuspend) */
 function OrgStatusBar({ orgs }) {
   if (orgs.length === 0) {
@@ -72,10 +72,10 @@ function OrgStatusBar({ orgs }) {
   );
 }
 
-/* ── SUB-KOMPONEN: Baris Tabel Organisasi Terkini ── */
+/* SUB-KOMPONEN: Baris Tabel Organisasi Terkini  */
 /* Digunakan pada daftar singkat organisasi di panel dashboard */
 function RecentOrgRow({ org, index }) {
-  // ✅ Tentukan status yang benar berdasarkan isSuspended
+  // Tentukan status yang benar berdasarkan isSuspended
   const getStatus = () => {
     if (org.isSuspended) return 'Tersuspend';
     return org.status;
@@ -112,7 +112,7 @@ function RecentOrgRow({ org, index }) {
   );
 }
 
-/* ── SUB-KOMPONEN: Modal Catatan Admin saat Resolve Banding ── */
+/* SUB-KOMPONEN: Modal Catatan Admin saat Resolve Banding  */
 /* Menggunakan createPortal agar modal di-render ke document.body,
    melewati semua overflow:hidden dari admin-layout dan admin-main-scroll */
 function ResolveModal({ banding, onConfirm, onCancel }) {
@@ -196,7 +196,7 @@ function ResolveModal({ banding, onConfirm, onCancel }) {
 }
 
 
-/* ── SUB-KOMPONEN: Panel Daftar Banding ── */
+/* SUB-KOMPONEN: Panel Daftar Banding  */
 function BandingPanel() {
   const { bandings, bandingsLoading, fetchBandings, resolveBanding } = useAdmin();
   const [filterStatus, setFilterStatus] = useState('pending');
@@ -325,7 +325,7 @@ function BandingPanel() {
   );
 }
 
-/* ── KOMPONEN UTAMA: Halaman Dashboard Admin ── */
+/* KOMPONEN UTAMA: Halaman Dashboard Admin  */
 
 export default function DashboardAdminPage() {
   const navigate = useNavigate();
@@ -345,7 +345,7 @@ export default function DashboardAdminPage() {
 
   return (
     <div className="page-enter space-y-6">
-      {/* ── BANNER SELAMAT DATANG ── */}
+      {/* BANNER SELAMAT DATANG  */}
       <div className="admin-card rounded-2xl p-6 flex items-center justify-between gap-4 overflow-hidden relative">
         <div className="relative z-10">
           <p className="text-teal-600 text-sm font-semibold mb-1">Selamat Datang</p>
@@ -362,7 +362,7 @@ export default function DashboardAdminPage() {
         <div className="absolute right-20 bottom-0 w-32 h-32 rounded-full bg-slate-400/10 translate-y-1/2 pointer-events-none" />
       </div>
 
-      {/* ── BARIS STATISTIK: 4 Kartu Ringkasan Admin ── */}
+      {/* BARIS STATISTIK: 4 Kartu Ringkasan Admin  */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard icon="fa-sitemap"      iconBg="bg-teal-700/20 text-teal-600"      label="Total Organisasi" value={isLoading ? '...' : totalOrgs}          sub="Semua status" />
         <StatCard icon="fa-check-circle" iconBg="bg-emerald-600/20 text-emerald-500" label="Aktif"           value={isLoading ? '...' : aktifOrgs}          sub="Beroperasi" />
@@ -370,7 +370,7 @@ export default function DashboardAdminPage() {
         <StatCard icon="fa-ban"          iconBg="bg-red-600/20 text-red-500"         label="Tersuspend"     value={isLoading ? '...' : tersuspendOrgs}      sub="Disuspend admin" />
       </div>
 
-      {/* ── BARIS KEDUA: Total Saldo Sistem (Kiri) & Organisasi Terdaftar (Kanan) ── */}
+      {/* BARIS KEDUA: Total Saldo Sistem (Kiri) & Organisasi Terdaftar (Kanan)  */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="admin-card rounded-2xl p-6 lg:col-span-1">
           <div className="flex items-center gap-2 mb-4">
@@ -426,7 +426,7 @@ export default function DashboardAdminPage() {
         </div>
       </div>
 
-      {/* ── BARIS KETIGA: Panel Pengajuan Banding ── */}
+      {/* BARIS KETIGA: Panel Pengajuan Banding  */}
       <BandingPanel />
     </div>
   );

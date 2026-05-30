@@ -3,7 +3,7 @@
  * Digunakan di halaman user & admin saat data sedang dimuat.
  */
 
-/* ── Base shimmer block ── */
+/* Base shimmer block  */
 export function Skeleton({ className = '', width, height, rounded = 'rounded-lg' }) {
   return (
     <div
@@ -13,7 +13,7 @@ export function Skeleton({ className = '', width, height, rounded = 'rounded-lg'
   );
 }
 
-/* ── Stat Card skeleton (3 cards) ── */
+/* Stat Card skeleton (3 cards)  */
 export function SkeletonStatCards() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -31,7 +31,7 @@ export function SkeletonStatCards() {
   );
 }
 
-/* ── Transaction Table skeleton ── */
+/* Transaction Table skeleton  */
 export function SkeletonTable({ rows = 5 }) {
   return (
     <div className="bg-white rounded-2xl border border-neutral-light/30 overflow-hidden">
@@ -70,7 +70,7 @@ export function SkeletonTable({ rows = 5 }) {
   );
 }
 
-/* ── Chart Card skeleton ── */
+/* Chart Card skeleton  */
 export function SkeletonChart({ height = 'h-64' }) {
   return (
     <div className="bg-white rounded-2xl p-5 border border-neutral-light/30">
@@ -87,7 +87,7 @@ export function SkeletonChart({ height = 'h-64' }) {
   );
 }
 
-/* ── Recent transaction list skeleton (Beranda) ── */
+/* Recent transaction list skeleton (Beranda)  */
 export function SkeletonRecentList({ rows = 5 }) {
   return (
     <div className="space-y-3">
@@ -108,7 +108,7 @@ export function SkeletonRecentList({ rows = 5 }) {
   );
 }
 
-/* ── Admin stat card skeleton ── */
+/* Admin stat card skeleton  */
 export function SkeletonAdminStats({ count = 4 }) {
   return (
     <div className={`grid grid-cols-2 lg:grid-cols-${count} gap-4`}>
@@ -126,7 +126,7 @@ export function SkeletonAdminStats({ count = 4 }) {
   );
 }
 
-/* ── Full Beranda skeleton ── */
+/* Full Beranda skeleton  */
 export function SkeletonBeranda() {
   return (
     <div className="space-y-6">
@@ -172,7 +172,7 @@ export function SkeletonBeranda() {
   );
 }
 
-/* ── Full Transaksi/Laporan skeleton ── */
+/* Full Transaksi/Laporan skeleton  */
 export function SkeletonTransaksi() {
   return (
     <div className="space-y-6">
@@ -189,7 +189,7 @@ export function SkeletonTransaksi() {
   );
 }
 
-/* ── Full Laporan skeleton (with chart) ── */
+/* Full Laporan skeleton (with chart)  */
 export function SkeletonLaporan() {
   return (
     <div className="space-y-6">
@@ -222,7 +222,7 @@ export function SkeletonLaporan() {
   );
 }
 
-/* ── Admin Dashboard skeleton ── */
+/* Admin Dashboard skeleton  */
 export function SkeletonAdminDashboard() {
   return (
     <div className="space-y-6">
@@ -241,7 +241,7 @@ export function SkeletonAdminDashboard() {
   );
 }
 
-/* ── Generic page skeleton ── */
+/* Generic page skeleton  */
 export function SkeletonPage() {
   return (
     <div className="space-y-6">

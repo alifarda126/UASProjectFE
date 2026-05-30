@@ -1,4 +1,4 @@
-/* ── CUSTOM HOOK: Mengelola filter data tabel (pencarian & rentang waktu) ── */
+/* CUSTOM HOOK: Mengelola filter data tabel (pencarian & rentang waktu)  */
 import { useState, useCallback, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 
@@ -13,7 +13,7 @@ export function useFilters() {
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // ✅ Refresh data transaksi saat hook pertama kali dipanggil
+  // Refresh data transaksi saat hook pertama kali dipanggil
   useEffect(() => {
     const loadTransactions = async () => {
       setIsLoading(true);
@@ -125,7 +125,7 @@ export function useFilters() {
     }
   }, []);
 
-  // ✅ Fungsi refresh manual untuk memuat ulang data transaksi
+  // Fungsi refresh manual untuk memuat ulang data transaksi
   const refresh = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -161,6 +161,6 @@ export function useFilters() {
     getFiltered, 
     getStats, 
     getTableData,
-    refresh, // ✅ Export refresh function
+    refresh, // Export refresh function
   };
 }

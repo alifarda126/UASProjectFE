@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 
 const ToastContext = createContext(null);
-/* ── KOMPONEN PROVIDER: State Global Notifikasi (Toast) ── */
+/* KOMPONEN PROVIDER: State Global Notifikasi (Toast)  */
 /* Menangani pemunculan pop-up pesan sukses/error di sudut layar */
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);

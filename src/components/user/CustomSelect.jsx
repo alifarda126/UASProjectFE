@@ -1,4 +1,4 @@
-/* ── KOMPONEN REUSABLE: Dropdown Kustom pengganti tag <select> ── */
+/* KOMPONEN REUSABLE: Dropdown Kustom pengganti tag <select>  */
 import { useState, useRef, useEffect, Children, isValidElement } from 'react';
 
 /**

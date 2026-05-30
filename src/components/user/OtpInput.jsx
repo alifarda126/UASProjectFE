@@ -1,4 +1,4 @@
-/* ── KOMPONEN REUSABLE: Input 6 digit OTP ── */
+/* KOMPONEN REUSABLE: Input 6 digit OTP  */
 import { useRef, useEffect } from 'react';
 
 /**

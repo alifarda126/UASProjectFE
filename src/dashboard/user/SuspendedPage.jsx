@@ -1,4 +1,4 @@
-/* ── HALAMAN: Organisasi Tersuspend ── */
+/* HALAMAN: Organisasi Tersuspend  */
 /* Ditampilkan otomatis saat user login ke dashboard tetapi organisasinya sedang tersuspend */
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';

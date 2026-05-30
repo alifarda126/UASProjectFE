@@ -63,7 +63,7 @@ function ActivityCard({ icon, iconBg, label, value, valueColor = 'text-slate-200
   );
 }
 
-/* ── KOMPONEN UTAMA: Halaman Profil & Keamanan (Admin) ── */
+/* KOMPONEN UTAMA: Halaman Profil & Keamanan (Admin)  */
 /* Mengelola identitas Super Admin, perubahan kata sandi, serta melihat sesi login aktif dan info server */
 export default function ProfilKeamananPage() {
   const showToast = useToast();
@@ -85,7 +85,7 @@ export default function ProfilKeamananPage() {
     timezone: 'Asia/Jakarta'
   });
 
-  // ✅ State untuk session dari backend
+  // State untuk session dari backend
   const [activeSession, setActiveSession] = useState({
     device: 'Desktop',
     os: 'Memuat...',
@@ -98,7 +98,7 @@ export default function ProfilKeamananPage() {
   
   const [isLoadingSession, setIsLoadingSession] = useState(true);
 
-  // ✅ Ambil session dari backend
+  // Ambil session dari backend
   useEffect(() => {
     const fetchSession = async () => {
       try {
@@ -149,7 +149,7 @@ export default function ProfilKeamananPage() {
     fetchSession();
   }, []);
 
-  /* ── Profile ── */
+  /* Profile  */
   const [adminName, setAdminName] = useState(user?.name || '');
   const [adminEmail, setAdminEmail] = useState(user?.email || '');
 
@@ -169,7 +169,7 @@ export default function ProfilKeamananPage() {
     }
   };
 
-  /* ── Password change ── */
+  /* Password change  */
   const [passMethod, setPassMethod] = useState('profile');
   const [oldPass, setOldPass] = useState('');
   const [newPass, setNewPass] = useState('');
@@ -190,7 +190,7 @@ export default function ProfilKeamananPage() {
     }
   };
 
-  /* ── Forgot flow ── */
+  /* Forgot flow  */
   const [forgotStep, setForgotStep] = useState(1);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [fpNew, setFpNew] = useState('');
@@ -385,7 +385,7 @@ export default function ProfilKeamananPage() {
         )}
       </div>
 
-      {/* ✅ Session Info - UPDATED dengan data dari backend */}
+      {/* Session Info - UPDATED dengan data dari backend */}
       <div className="admin-card rounded-2xl p-6">
         <h4 className="text-sm font-semibold text-slate-800 mb-4 flex items-center gap-2">
           <i className="fas fa-history text-teal-600 text-xs" /> Sesi Aktif

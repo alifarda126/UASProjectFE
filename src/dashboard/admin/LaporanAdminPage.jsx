@@ -26,7 +26,7 @@ function smartMaxCount(maxVal) {
   return Math.ceil(nice * 1.25);
 }
 
-/* ── SUB-KOMPONEN: Pembungkus Chart.js Generik (forwardRef agar parent bisa akses canvas) ── */
+/* SUB-KOMPONEN: Pembungkus Chart.js Generik (forwardRef agar parent bisa akses canvas)  */
 const ChartCanvas = forwardRef(function ChartCanvas({ config, height = 'h-52' }, fwdRef) {
   const internalRef = useRef(null);
   const canvasRef   = fwdRef || internalRef;
@@ -52,7 +52,7 @@ const GRID  = { color: 'rgba(255,255,255,0.05)' };
 const TICKS = (cb) => ({ ticks: { callback: cb, color: '#64748b', font: { size: 11 } }, grid: GRID });
 const TICKS_INT = (cb) => ({ ticks: { callback: cb, color: '#64748b', font: { size: 11 }, stepSize: 1 }, grid: GRID });
 
-/* ── FUNGSI UTILITY: Ekspor data laporan organisasi ke file CSV ── */
+/* FUNGSI UTILITY: Ekspor data laporan organisasi ke file CSV  */
 function exportCSV(orgs) {
   // Header kolom
   const header = ['Nama', 'Tipe', 'Email', 'Anggota', 'Saldo', 'Status'];
@@ -73,7 +73,7 @@ function exportCSV(orgs) {
   URL.revokeObjectURL(url);
 }
 
-/* ── KOMPONEN: Admin Print Layout (tersembunyi kecuali saat print) ── */
+/* KOMPONEN: Admin Print Layout (tersembunyi kecuali saat print)  */
 function AdminPrintLayout({ orgs, stats, laporanSummary, chartImages = {} }) {
   const fmtPrint = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n || 0);
   const totalSaldo  = laporanSummary.total_saldo     || stats.totalBalance || 0;
@@ -217,21 +217,21 @@ function AdminPrintLayout({ orgs, stats, laporanSummary, chartImages = {} }) {
   );
 }
 
-/* ── KOMPONEN UTAMA: Halaman Laporan (Admin) ── */
+/* KOMPONEN UTAMA: Halaman Laporan (Admin)  */
 /* Menyajikan ringkasan dan statistik global seluruh organisasi dalam bentuk grafik dan tabel */
 export default function LaporanAdminPage() {
   const { orgs, stats, laporanSummary, fetchAdminData, fetchLaporanKeuangan, refreshAdminData, laporanLoading } = useAdmin();
 
-  // ✅ Fetch laporan keuangan & data organisasi saat komponen dimuat
+  // Fetch laporan keuangan & data organisasi saat komponen dimuat
   useEffect(() => {
     fetchAdminData();
     fetchLaporanKeuangan();
   }, [fetchAdminData, fetchLaporanKeuangan]);
 
-  // ✅ Listener untuk refresh data admin saat ada perubahan dari user
+  // Listener untuk refresh data admin saat ada perubahan dari user
   useEffect(() => {
     const handleAdminDataRefresh = () => {
-      console.log('📢 Event admin:data-changed diterima, refreshing...');
+      console.log(' Event admin:data-changed diterima, refreshing...');
       if (refreshAdminData) {
         refreshAdminData();
       } else {
@@ -261,7 +261,7 @@ export default function LaporanAdminPage() {
     'Tersuspend': 'bg-red-500/15 text-red-400 border-red-500/30',
   };
 
-  // ✅ Gunakan data dari laporanSummary untuk total saldo yang akurat
+  // Gunakan data dari laporanSummary untuk total saldo yang akurat
   const totalSaldoReal = laporanSummary.total_saldo || stats.totalBalance;
   const totalPemasukanReal = laporanSummary.total_pemasukan || 0;
   const totalPengeluaranReal = laporanSummary.total_pengeluaran || 0;
@@ -270,7 +270,7 @@ export default function LaporanAdminPage() {
   const maxTypeCount = byType.length > 0 ? Math.max(...byType.map(([, c]) => c)) : 0;
   const maxMemberCount = topMembers.length > 0 ? Math.max(...topMembers.map(o => o.memberCount)) : 0;
 
-  /* ── KONFIGURASI GRAFIK: Menyiapkan parameter visual untuk 4 grafik (Donut, Bar Horizontal, Bar Vertikal, Line) ── */
+  /* KONFIGURASI GRAFIK: Menyiapkan parameter visual untuk 4 grafik (Donut, Bar Horizontal, Bar Vertikal, Line)  */
   const donutConfig = {
     type: 'doughnut',
     data: {
@@ -348,16 +348,16 @@ export default function LaporanAdminPage() {
     },
   };
 
-  /* ── Refs untuk setiap canvas chart ── */
+  /* Refs untuk setiap canvas chart  */
   const donutRef = useRef(null);
   const hBarRef  = useRef(null);
   const vBarRef  = useRef(null);
   const lineRef  = useRef(null);
 
-  /* ── State gambar chart untuk dikirim ke AdminPrintLayout ── */
+  /* State gambar chart untuk dikirim ke AdminPrintLayout  */
   const [chartImages, setChartImages] = useState({});
 
-  /* ── Export PDF — tangkap semua canvas chart sebelum print ── */
+  /* Export PDF — tangkap semua canvas chart sebelum print  */
   const exportPDF = useCallback(() => {
     const snap = (ref) => {
       try { return ref.current ? ref.current.toDataURL('image/png', 1.0) : null; } catch (_) { return null; }
@@ -518,7 +518,7 @@ export default function LaporanAdminPage() {
         </div>
       </div>
 
-      {/* ── Hidden Admin Print Layout (ditampilkan hanya saat print) ── */}
+      {/* Hidden Admin Print Layout (ditampilkan hanya saat print)  */}
       <AdminPrintLayout orgs={orgs} stats={stats} laporanSummary={laporanSummary} chartImages={chartImages} />
     </div>
   );

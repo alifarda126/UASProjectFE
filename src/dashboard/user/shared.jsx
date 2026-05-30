@@ -3,9 +3,9 @@ import { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { formatRupiah, formatDate } from '../../utils/formatters';
 
-/* ── KOMPONEN REUSABLE: File ini berisi komponen-komponen yang sering dipakai di berbagai halaman User ── */
+/* KOMPONEN REUSABLE: File ini berisi komponen-komponen yang sering dipakai di berbagai halaman User  */
 
-/* ── SUB-KOMPONEN: Date Picker Mini ── */
+/* SUB-KOMPONEN: Date Picker Mini  */
 function MiniDatePicker({ value, onChange, placeholder = 'dd/mm/yyyy' }) {
   const formatForDisplay = (v) => {
     if (!v) return '';
@@ -227,8 +227,8 @@ export function BuktiViewerModal({ txn, onClose }) {
   const [activeIdx, setActiveIdx] = useState(null);
   if (!txn) return null;
 
-  const getName    = (d) => typeof d === 'string' ? d : (d.name || '');
-  const getUrl     = (d) => typeof d === 'object' ? (d.url || d.dataUrl) : null;
+  const getName    = (d) => typeof d === 'string' ? d : d.name;
+  const getUrl     = (d) => typeof d === 'object' ? d.dataUrl : null;
   const isImgName  = (n) => /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(n);
   const isPdfName  = (n) => /\.pdf$/i.test(n);
 
@@ -403,7 +403,7 @@ export function TableWrapper({ children }) {
   );
 }
 
-/* ── Print Layout Component untuk Laporan PDF Export ── */
+/* Print Layout Component untuk Laporan PDF Export  */
 export function PrintLayout({ organisasi, stats, allocations, tableData, totalAlloc, chartImageUrl }) {
   // Hitung inisial 2 kata (fallback saat tidak ada logo)
   const initials = (organisasi?.name || 'O')
@@ -446,7 +446,7 @@ export function PrintLayout({ organisasi, stats, allocations, tableData, totalAl
           ))}
       </div>
 
-      {/* ── Grafik Arus Kas (sebagai gambar dari canvas) ── */}
+      {/* Grafik Arus Kas (sebagai gambar dari canvas)  */}
       {chartImageUrl && (
         <div className="print-no-break" style={{ marginBottom: 4 }}>
           <div style={{ fontSize: 9, fontWeight: 700, color: '#083D56', textTransform: 'uppercase', letterSpacing: '.05em', margin: '14px 0 8px', borderLeft: '3px solid #00695C', paddingLeft: 8 }}>Visualisasi Arus Kas (6 Bulan Terakhir)</div>

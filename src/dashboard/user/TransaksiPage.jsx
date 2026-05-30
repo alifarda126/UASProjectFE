@@ -7,7 +7,7 @@ import { useToast } from '../../context/ToastContext';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { SkeletonTransaksi } from '../../components/Skeleton';
 
-/* ── KOMPONEN UTAMA: Halaman Transaksi ── */
+/* KOMPONEN UTAMA: Halaman Transaksi  */
 /* Menampilkan daftar lengkap pemasukan dan pengeluaran beserta fitur filter & pencarian */
 export default function TransaksiPage() {
   const { openModal } = useOutletContext();
@@ -20,7 +20,7 @@ export default function TransaksiPage() {
   const [confirmId,   setConfirmId]   = useState(null); // ID transaksi yang akan dihapus
   const [isDeleting,  setIsDeleting]  = useState(false);
 
-  // ✅ Auto-refresh data saat halaman dimuat
+  // Auto-refresh data saat halaman dimuat
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -38,13 +38,13 @@ export default function TransaksiPage() {
   const stats     = filters.getStats();
   const tableData = filters.getTableData();
 
-  // ✅ Tampilkan skeleton saat data pertama kali dimuat
+  // Tampilkan skeleton saat data pertama kali dimuat
   if (isDataLoading && state.transactions.length === 0) return <SkeletonTransaksi />;
 
-  /* ── HANDLER: Buka dialog konfirmasi hapus ── */
+  /* HANDLER: Buka dialog konfirmasi hapus  */
   const handleDeleteRequest = (id) => setConfirmId(id);
 
-  /* ── HANDLER: Konfirmasi hapus — panggil API ── */
+  /* HANDLER: Konfirmasi hapus — panggil API  */
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
     try {
@@ -62,10 +62,10 @@ export default function TransaksiPage() {
 
   return (
     <div className="page-enter space-y-6">
-      {/* ── KARTU STATISTIK ── */}
+      {/* KARTU STATISTIK  */}
       <StatCards stats={stats} />
 
-      {/* ── BARIS FILTER & PENCARIAN ── */}
+      {/* BARIS FILTER & PENCARIAN  */}
       <FilterBar
         timeFilter={filters.timeFilter}
         typeFilter={filters.typeFilter}
@@ -78,7 +78,7 @@ export default function TransaksiPage() {
         onSearch={filters.setSearch}
       />
 
-      {/* ── TABEL TRANSAKSI ── */}
+      {/* TABEL TRANSAKSI  */}
       <TableWrapper>
         <TransactionTable
           data={tableData}
@@ -88,7 +88,7 @@ export default function TransaksiPage() {
         />
       </TableWrapper>
 
-      {/* ── Custom Confirm Dialog (pengganti window.confirm) ── */}
+      {/* Custom Confirm Dialog (pengganti window.confirm)  */}
       <ConfirmDialog
         isOpen={confirmId !== null}
         title="Hapus Transaksi"

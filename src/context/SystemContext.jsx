@@ -15,7 +15,7 @@ export const DEFAULTS = {
 
 const SystemContext = createContext(null);
 
-/* ── KOMPONEN PROVIDER: State Global Pengaturan Sistem ── */
+/* KOMPONEN PROVIDER: State Global Pengaturan Sistem  */
 /* Mengelola variabel yang bisa diubah Super Admin (branding, pendaftaran buka/tutup) */
 export function SystemProvider({ children }) {
   const [settings, setSettings] = useState({ ...DEFAULTS });

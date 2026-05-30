@@ -1,4 +1,4 @@
-/* ── CUSTOM HOOK: useAuth — akses mudah ke state autentikasi dari AppContext ── */
+/* CUSTOM HOOK: useAuth — akses mudah ke state autentikasi dari AppContext  */
 import { useApp } from '../context/AppContext';
 
 /**

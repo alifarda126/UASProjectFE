@@ -25,7 +25,7 @@ export default function OAuthCallback() {
     const errorMessage  = searchParams.get('message');
     const status        = searchParams.get('status');
 
-    // ── 1. Error dari backend OAuth ──────────────────────────────────────
+    // 1. Error dari backend OAuth 
     if (error) {
       handled.current = true;
       let msg = 'Gagal login dengan Google';
@@ -36,7 +36,7 @@ export default function OAuthCallback() {
       return;
     }
 
-    // ── 2. Sukses — panggil fetchUser() ulang untuk baca cookie baru ──────
+    // 2. Sukses — panggil fetchUser() ulang untuk baca cookie baru 
     if (status === 'success') {
       handled.current = true;
 

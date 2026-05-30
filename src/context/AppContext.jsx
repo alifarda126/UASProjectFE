@@ -3,7 +3,7 @@ import api from '../utils/api';
 
 const TODAY = new Date();
 
-/* ── STATE AWAL (INITIAL STATE) ── */
+/* STATE AWAL (INITIAL STATE)  */
 /* State awal akan kosong/null sebelum fetch data dari API */
 const initialState = {
   profile: {
@@ -36,16 +36,16 @@ export function AppProvider({ children }) {
   // Setelah itu selalu false agar tidak muncul blank saat re-fetch (login/refresh token)
   const [isLoading, setIsLoading] = useState(true);
   const hasInitialized = useRef(false);
-  const isLoggingOut = useRef(false); // ✅ Flag untuk blokir fetchUser saat logout berlangsung
+  const isLoggingOut = useRef(false); // Flag untuk blokir fetchUser saat logout berlangsung
   
   // Organisasi State
   const [organisasi, setOrganisasi] = useState(null);
   const [organisasiList, setOrganisasiList] = useState([]);
   const [isDataLoading, setIsDataLoading] = useState(false); // true saat fetchTransactions berjalan
 
-  /* ── MANAJEMEN AUTENTIKASI ── */
+  /* MANAJEMEN AUTENTIKASI  */
 
-  // ✅ TAMBAHKAN: Fetch transaksi dari backend
+  // TAMBAHKAN: Fetch transaksi dari backend
   const fetchTransactions = useCallback(async () => {
     if (!organisasi?.id) {
       console.log('No organisasi, skip fetchTransactions');
@@ -54,7 +54,7 @@ export function AppProvider({ children }) {
     
     try {
       console.log('Fetching transactions for organisasi:', organisasi.id);
-      setIsDataLoading(true); // ✅ Mulai loading
+      setIsDataLoading(true); // Mulai loading
       const { data } = await api.get('/transaksi');
       console.log('Transactions fetched:', data.data);
       
@@ -66,7 +66,7 @@ export function AppProvider({ children }) {
         cat: t.category,
         amount: t.amount,
         status: t.status,
-        docs: t.docs || [],  // ✅ Dibaca langsung dari backend
+        docs: t.docs || [],  // Dibaca langsung dari backend
       }));
       
       setState(prev => ({
@@ -76,13 +76,13 @@ export function AppProvider({ children }) {
     } catch (error) {
       console.error("Gagal fetch transaksi:", error);
     } finally {
-      setIsDataLoading(false); // ✅ Selesai loading
+      setIsDataLoading(false); // Selesai loading
     }
   }, [organisasi?.id]);
 
   // Fetch current user & active organisasi
   const fetchUser = useCallback(async () => {
-    // ✅ Jangan fetch jika sedang dalam proses logout — mencegah session pulih kembali
+    // Jangan fetch jika sedang dalam proses logout — mencegah session pulih kembali
     if (isLoggingOut.current) return;
 
     // Hanya set isLoading=true saat PERTAMA KALI app mount (belum tahu status login).
@@ -101,7 +101,7 @@ export function AppProvider({ children }) {
       if (data.organisasi) {
         setOrganisasi(data.organisasi);
 
-        // ✅ Cache org data agar Sidebar/Topbar langsung tampil saat refresh
+        // Cache org data agar Sidebar/Topbar langsung tampil saat refresh
         try {
           localStorage.setItem('mf_org_cache', JSON.stringify({
             name:     data.organisasi.name     || '',
@@ -148,7 +148,7 @@ export function AppProvider({ children }) {
 
   const prevOrgId = useRef(null);
 
-  // ✅ EFFECT untuk background polling (real-time suspend detection)
+  // EFFECT untuk background polling (real-time suspend detection)
   useEffect(() => {
     if (!isAuthenticated) return;
     const intervalId = setInterval(() => {
@@ -157,7 +157,7 @@ export function AppProvider({ children }) {
     return () => clearInterval(intervalId);
   }, [isAuthenticated, fetchUser]);
 
-  // ✅ EFFECT untuk fetch transaksi & agendas & members & programs saat organisasi berubah
+  // EFFECT untuk fetch transaksi & agendas & members & programs saat organisasi berubah
   useEffect(() => {
     if (organisasi?.id && isAuthenticated) {
       console.log('Organisasi ready, fetching all data...');
@@ -182,29 +182,29 @@ export function AppProvider({ children }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [organisasi?.id, isAuthenticated]);
 
-  // ✅ TAMBAHKAN: Fetch notifikasi dari backend
+  // TAMBAHKAN: Fetch notifikasi dari backend
   const fetchNotifications = useCallback(async () => {
-    console.log('🔥 fetchNotifications dipanggil, isAuthenticated:', isAuthenticated);
+    console.log(' fetchNotifications dipanggil, isAuthenticated:', isAuthenticated);
     
     if (!isAuthenticated) {
-      console.log('❌ Tidak fetch karena belum authenticated');
+      console.log(' Tidak fetch karena belum authenticated');
       return;
     }
     
     try {
       const { data } = await api.get('/notifications');
-      console.log('✅ Data mentah dari API:', data);
+      console.log(' Data mentah dari API:', data);
       
       // Pastikan data.data adalah array
       const notificationsArray = Array.isArray(data.data) ? data.data : [];
-      console.log('📊 Jumlah notifikasi:', notificationsArray.length);
+      console.log(' Jumlah notifikasi:', notificationsArray.length);
       
       const mappedNotifications = notificationsArray.map(n => ({
         id: n.id,
         text: n.message,  // ← ini yang tampil di UI
         title: n.title,
         icon: n.icon || 'fa-bell',
-        // ✅ Warna icon: pengumuman/bullhorn → kuning, success → hijau, warning → oranye, error → merah, lainnya → teal
+        // Warna icon: pengumuman/bullhorn → kuning, success → hijau, warning → oranye, error → merah, lainnya → teal
         iconColor: (n.icon === 'fa-bullhorn' || n.type === 'announcement' || n.type === 'pengumuman')
           ? 'text-amber-400'
           : n.type === 'success' ? 'text-emerald-500'
@@ -216,29 +216,29 @@ export function AppProvider({ children }) {
         link: n.link || null,
       }));
       
-      console.log('✅ Notifikasi setelah mapping:', mappedNotifications);
+      console.log(' Notifikasi setelah mapping:', mappedNotifications);
       
       setState(prev => ({
         ...prev,
         notifications: mappedNotifications
       }));
     } catch (error) {
-      console.error("❌ Gagal mengambil notifikasi:", error);
+      console.error(" Gagal mengambil notifikasi:", error);
     }
   }, [isAuthenticated]);
 
-  // ✅ EFFECT untuk fetch notifikasi saat isAuthenticated menjadi true
+  // EFFECT untuk fetch notifikasi saat isAuthenticated menjadi true
   useEffect(() => {
     if (isAuthenticated) {
-      console.log('✅ isAuthenticated true, fetch notifikasi sekarang...');
+      console.log(' isAuthenticated true, fetch notifikasi sekarang...');
       fetchNotifications();
     }
   }, [isAuthenticated, fetchNotifications]);
 
-  // ✅ LISTENER untuk refresh notifikasi dari event (misal dari admin setelah resolve banding)
+  // LISTENER untuk refresh notifikasi dari event (misal dari admin setelah resolve banding)
   useEffect(() => {
     const handleRefreshNotifications = () => {
-      console.log('📢 Event notification:refresh diterima');
+      console.log(' Event notification:refresh diterima');
       fetchNotifications();
     };
     
@@ -263,11 +263,11 @@ export function AppProvider({ children }) {
 
   // Logout dari backend
   const logout = useCallback(async () => {
-    // ✅ Set flag logout PERTAMA agar polling fetchUser tidak memulihkan session
+    // Set flag logout PERTAMA agar polling fetchUser tidak memulihkan session
     isLoggingOut.current = true;
 
     try {
-      // ✅ Tunggu API logout selesai DULU agar cookie session di backend benar-benar dihapus
+      // Tunggu API logout selesai DULU agar cookie session di backend benar-benar dihapus
       // sebelum state di-clear — mencegah polling fetchUser memulihkan session yang belum expired
       await api.post('/logout');
     } catch (error) {
@@ -279,17 +279,17 @@ export function AppProvider({ children }) {
       setOrganisasi(null);
       setState(initialState);
       localStorage.removeItem('mf_last_role');
-      localStorage.removeItem('mf_org_cache');  // ✅ Hapus cache Sidebar/Topbar
+      localStorage.removeItem('mf_org_cache');  // Hapus cache Sidebar/Topbar
 
       // Navigasi ke login setelah state bersih
       window.dispatchEvent(new CustomEvent('auth:logout'));
 
-      // ✅ Reset flag setelah navigasi (sedikit delay agar interval polling benar-benar berhenti)
+      // Reset flag setelah navigasi (sedikit delay agar interval polling benar-benar berhenti)
       setTimeout(() => { isLoggingOut.current = false; }, 500);
     }
   }, []);
 
-  /* ── MANAJEMEN PROFIL USER ── */
+  /* MANAJEMEN PROFIL USER  */
   
   const updateUser = useCallback(async (userData) => {
     const { data } = await api.put('/profil', userData);
@@ -314,7 +314,7 @@ export function AppProvider({ children }) {
     return data;
   }, []);
 
-  // ✅ Upload logo organisasi (bukan avatar user)
+  // Upload logo organisasi (bukan avatar user)
   const uploadOrgLogo = useCallback(async (file) => {
     if (!organisasi?.id) throw new Error('Tidak ada organisasi aktif');
 
@@ -342,7 +342,7 @@ export function AppProvider({ children }) {
     return data;
   }, [organisasi?.id]);
 
-  // ✅ Hapus logo organisasi (kembalikan ke inisial/default)
+  // Hapus logo organisasi (kembalikan ke inisial/default)
   const deleteOrgLogo = useCallback(async () => {
     if (!organisasi?.id) return;
 
@@ -388,7 +388,7 @@ export function AppProvider({ children }) {
     });
   }, [fetchUser]);
 
-  /* ── MANAJEMEN DATA (CRUD via API) ── */
+  /* MANAJEMEN DATA (CRUD via API)  */
 
   const addTransaction = useCallback(async (txn) => {
     try {
@@ -401,15 +401,15 @@ export function AppProvider({ children }) {
         amount: Number(txn.amount),
         date: txn.date,
         notes: txn.note || '',
-        docs: txn.docs || [],  // ✅ Kirim docs ke backend
+        docs: txn.docs || [],  // Kirim docs ke backend
       });
       
       console.log('Transaction added, response:', response.data);
       
-      // ✅ Refresh transaksi dari backend setelah berhasil
+      // Refresh transaksi dari backend setelah berhasil
       await fetchTransactions();
       
-      // ✅ Kirim event untuk refresh data admin
+      // Kirim event untuk refresh data admin
       window.dispatchEvent(new CustomEvent('admin:data-changed'));
       
       return response.data;
@@ -428,13 +428,13 @@ export function AppProvider({ children }) {
         amount: Number(data.amount),
         date: data.date,
         notes: data.note || '',
-        docs: data.docs ?? [],  // ✅ Kirim docs ke backend (termasuk array kosong jika semua dihapus)
+        docs: data.docs ?? [],  // Kirim docs ke backend (termasuk array kosong jika semua dihapus)
       });
       
       // Refresh transaksi dari backend setelah berhasil
       await fetchTransactions();
       
-      // ✅ Kirim event untuk refresh data admin
+      // Kirim event untuk refresh data admin
       window.dispatchEvent(new CustomEvent('admin:data-changed'));
       
       return response.data;
@@ -451,7 +451,7 @@ export function AppProvider({ children }) {
       // Refresh transaksi dari backend setelah berhasil
       await fetchTransactions();
       
-      // ✅ Kirim event untuk refresh data admin
+      // Kirim event untuk refresh data admin
       window.dispatchEvent(new CustomEvent('admin:data-changed'));
     } catch (error) {
       console.error("Gagal menghapus transaksi:", error);
@@ -461,7 +461,7 @@ export function AppProvider({ children }) {
 
 
 
-  // ✅ Update data organisasi via API
+  // Update data organisasi via API
   const updateOrganisasi = useCallback(async (orgData) => {
     if (!organisasi?.id) throw new Error('Tidak ada organisasi aktif');
     const { data } = await api.put(`/organisasi/${organisasi.id}`, {
@@ -483,7 +483,7 @@ export function AppProvider({ children }) {
         description: data.data?.description ?? s.profile.description,
       }
     }));
-    // ✅ Update cache agar Sidebar/Topbar langsung tampil nama/tipe baru
+    // Update cache agar Sidebar/Topbar langsung tampil nama/tipe baru
     try {
       const cached = JSON.parse(localStorage.getItem('mf_org_cache') || '{}');
       localStorage.setItem('mf_org_cache', JSON.stringify({
@@ -495,7 +495,7 @@ export function AppProvider({ children }) {
     return data;
   }, [organisasi?.id]);
 
-  // ✅ Fetch agendas dari backend
+  // Fetch agendas dari backend
   const fetchAgendas = useCallback(async () => {
     if (!organisasi?.id) return;
     try {
@@ -512,7 +512,7 @@ export function AppProvider({ children }) {
     }
   }, [organisasi?.id]);
 
-  // ✅ Tambah agenda via API
+  // Tambah agenda via API
   const addAgenda = useCallback(async (agenda) => {
     if (!organisasi?.id) return;
     try {
@@ -536,7 +536,7 @@ export function AppProvider({ children }) {
     }
   }, [organisasi?.id]);
 
-  // ✅ Edit agenda via API
+  // Edit agenda via API
   const editAgenda = useCallback(async (id, data) => {
     try {
       await api.put(`/agendas/${id}`, {
@@ -551,7 +551,7 @@ export function AppProvider({ children }) {
     }
   }, []);
 
-  // ✅ Hapus agenda via API
+  // Hapus agenda via API
   const deleteAgenda = useCallback(async (id) => {
     try {
       await api.delete(`/agendas/${id}`);
@@ -561,7 +561,7 @@ export function AppProvider({ children }) {
     setState((s) => ({ ...s, agendas: s.agendas.filter((a) => a.id !== id) }));
   }, []);
 
-  // ✅ Fetch anggota kas dari backend
+  // Fetch anggota kas dari backend
   const fetchMembers = useCallback(async () => {
     if (!organisasi?.id) return;
     try {
@@ -579,7 +579,7 @@ export function AppProvider({ children }) {
     }
   }, [organisasi?.id]);
 
-  // ✅ Tambah anggota kas via API
+  // Tambah anggota kas via API
   const addMember = useCallback(async (member) => {
     if (!organisasi?.id) return;
     try {
@@ -608,7 +608,7 @@ export function AppProvider({ children }) {
     setState((s) => ({ ...s, members: s.members.map((m) => ({ ...m, isPaid: status })) }));
   }, []);
 
-  // ✅ Hapus anggota kas via API
+  // Hapus anggota kas via API
   const deleteMember = useCallback(async (id) => {
     try {
       await api.delete(`/kas-anggota/${id}`);
@@ -634,7 +634,7 @@ export function AppProvider({ children }) {
     }
   }, [organisasi?.id]);
 
-  // ✅ Fetch program anggaran dari backend
+  // Fetch program anggaran dari backend
   const fetchPrograms = useCallback(async () => {
     if (!organisasi?.id) return;
     try {
@@ -646,7 +646,7 @@ export function AppProvider({ children }) {
     }
   }, [organisasi?.id]);
 
-  // ✅ Update programs via API (sync)
+  // Update programs via API (sync)
   const updatePrograms = useCallback(async (programs) => {
     // Update lokal dulu agar UI langsung responsif
     setState((s) => ({ ...s, programs }));
@@ -661,7 +661,7 @@ export function AppProvider({ children }) {
     }
   }, [organisasi?.id]);
 
-  // ✅ recordAllDues sekarang memanggil API transaksi untuk setiap anggota
+  // recordAllDues sekarang memanggil API transaksi untuk setiap anggota
   const recordAllDues = useCallback(async () => {
     const today = TODAY.toISOString().split('T')[0];
     const days = state.duesSettings.interval;
@@ -688,25 +688,25 @@ export function AppProvider({ children }) {
     await fetchTransactions();
   }, [state.duesSettings, state.members, organisasi?.id, fetchTransactions]);
 
-  // ✅ FIX: Ganti PUT ke POST untuk menghindari error 405
+  // FIX: Ganti PUT ke POST untuk menghindari error 405
   const markAllRead = useCallback(() => {
     setState((s) => ({
         ...s,
         notifications: s.notifications.map((n) => ({ ...n, read: true })),
     }));
-    // ✅ Ganti dari '/notifications/read-all' menjadi '/notifications/mark-all-read'
+    // Ganti dari '/notifications/read-all' menjadi '/notifications/mark-all-read'
     api.post('/notifications/mark-all-read').catch((err) => {
         console.error('Gagal mark all read:', err);
     });
   }, []);
   
-  // ✅ FIX: Ganti PUT ke POST
+  // FIX: Ganti PUT ke POST
   const markOneRead = useCallback((id) => {
     setState((s) => ({
         ...s,
         notifications: s.notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
     }));
-    // ✅ Ganti dari '/notifications/${id}/read' menjadi sesuai route
+    // Ganti dari '/notifications/${id}/read' menjadi sesuai route
     api.post(`/notifications/${id}/read`).catch((err) => {
         console.error('Gagal mark read:', err);
     });
@@ -718,7 +718,7 @@ export function AppProvider({ children }) {
     <AppContext.Provider value={{
       // Global State
       state, TODAY,
-      isDataLoading,  // ✅ Loading state untuk skeleton
+      isDataLoading,  // Loading state untuk skeleton
       
       // Auth & User State
       user,
@@ -735,8 +735,8 @@ export function AppProvider({ children }) {
       updateUser,
       changePassword,
       uploadAvatar,
-      uploadOrgLogo,    // ✅ Upload logo organisasi
-      deleteOrgLogo,    // ✅ Hapus logo organisasi
+      uploadOrgLogo,    // Upload logo organisasi
+      deleteOrgLogo,    // Hapus logo organisasi
       setActiveOrganisasi,
 
       // App Actions

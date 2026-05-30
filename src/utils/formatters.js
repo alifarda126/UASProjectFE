@@ -1,4 +1,4 @@
-/* ── FUNGSI UTILITY: Format mata uang & tanggal ── */
+/* FUNGSI UTILITY: Format mata uang & tanggal  */
 export function formatRupiah(n) {
   return 'Rp' + Number(n).toLocaleString('id-ID');
 }

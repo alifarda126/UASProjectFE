@@ -1,4 +1,4 @@
-/* ── KOMPONEN LAYOUT: Sidebar Navigasi User ── */
+/* KOMPONEN LAYOUT: Sidebar Navigasi User  */
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { getInitials } from '../../utils/formatters';
@@ -17,7 +17,7 @@ export default function Sidebar({ onOpenModal, isOpen, onToggle }) {
   const { state, organisasi, logout } = useApp();
   const { profile } = state;
 
-  // ✅ Baca cache dari localStorage agar Sidebar langsung tampil saat refresh
+  // Baca cache dari localStorage agar Sidebar langsung tampil saat refresh
   // (sebelum API fetchUser() selesai)
   const cachedOrg = (() => {
     try { return JSON.parse(localStorage.getItem('mf_org_cache') || '{}'); }

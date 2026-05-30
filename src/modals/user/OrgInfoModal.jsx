@@ -1,4 +1,4 @@
-/* ── KOMPONEN MODAL: Melihat profil publik organisasi (User) ── */
+/* KOMPONEN MODAL: Melihat profil publik organisasi (User)  */
 import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';
 import { getInitials } from '../../utils/formatters';

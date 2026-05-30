@@ -21,14 +21,14 @@
     
     <script>
       (function() {
-        // ✅ Tunggu DOM ready sebelum mengakses body
+        // Tunggu DOM ready sebelum mengakses body
         function setBackground() {
           try {
             var role = localStorage.getItem('mf_last_role');
             // Background SOLID seperti semula
             var bg = (role === 'user') ? '#F5F5F5' : '#0A1628';
             
-            // ✅ Cek apakah element ada sebelum mengakses style
+            // Cek apakah element ada sebelum mengakses style
             if (document.documentElement) {
               document.documentElement.style.background = bg;
             }
@@ -48,7 +48,7 @@
           }
         }
         
-        // ✅ Jalankan saat DOM sudah siap
+        // Jalankan saat DOM sudah siap
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', setBackground);
         } else {

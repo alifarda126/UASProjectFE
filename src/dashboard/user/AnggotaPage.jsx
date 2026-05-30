@@ -7,7 +7,7 @@ import ConfirmDialog from '../../components/ConfirmDialog';
 
 const MEMBER_COLORS = ['#083D56', '#00695C', '#546E7A', '#00897B', '#0C5272', '#78909C'];
 
-/* ── Helper: hitung status iuran anggota ── */
+/* Helper: hitung status iuran anggota  */
 function getMemberStatus(member, duesSettings, transactions) {
   // Cari transaksi iuran untuk anggota ini dalam periode aktif
   const now = new Date();
@@ -39,7 +39,7 @@ function getMemberStatus(member, duesSettings, transactions) {
   return 'belum';
 }
 
-/* ── Helper: hitung periode iuran aktif ── */
+/* Helper: hitung periode iuran aktif  */
 function getActivePeriod(duesSettings) {
   const now = new Date();
   const intervalDays = duesSettings.interval || 30;
@@ -53,7 +53,7 @@ function getActivePeriod(duesSettings) {
   return { startStr: fmt(start), endStr: fmt(end), sisa: diffDays };
 }
 
-/* ── KOMPONEN UTAMA: Halaman Manajemen Anggota & Iuran Kas (User) ── */
+/* KOMPONEN UTAMA: Halaman Manajemen Anggota & Iuran Kas (User)  */
 export default function AnggotaPage() {
   const navigate = useNavigate();
   const {
@@ -63,14 +63,14 @@ export default function AnggotaPage() {
   const showToast = useToast();
 
   const [form, setForm] = useState({ name: '', nim: '', phone: '' });
-  const [duesDays, setDuesDays] = useState(state.duesSettings.interval);
-  const [duesAmount, setDuesAmount] = useState(state.duesSettings.amount);
+  const [duesDays,    setDuesDays]   = useState(state.duesSettings.interval);
+  const [duesAmount,  setDuesAmount] = useState(state.duesSettings.amount);
   const [isRecording, setIsRecording] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
+  const [isAdding,    setIsAdding]   = useState(false);
 
   // State untuk confirm dialog hapus anggota
   const [confirmMemberId, setConfirmMemberId] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleting,      setIsDeleting]      = useState(false);
 
   const setF = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
@@ -116,10 +116,10 @@ export default function AnggotaPage() {
     }
   };
 
-  /* ── Buka dialog konfirmasi hapus anggota ── */
+  /* Buka dialog konfirmasi hapus anggota  */
   const handleDelete = (id) => setConfirmMemberId(id);
 
-  /* ── Konfirmasi hapus — panggil API ── */
+  /* Konfirmasi hapus — panggil API  */
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
     try {
@@ -139,18 +139,18 @@ export default function AnggotaPage() {
       ...m,
       status: getMemberStatus(m, state.duesSettings, state.transactions),
     })),
-    [state.members, state.duesSettings, state.transactions]);
+  [state.members, state.duesSettings, state.transactions]);
 
-  const paidCount = state.members.filter((m) => m.isPaid).length;
-  const dicatatCount = membersWithStatus.filter(m => m.status === 'dicatat').length;
-  const skipCount = state.members.length - dicatatCount;
-  const period = getActivePeriod(state.duesSettings);
+  const paidCount     = state.members.filter((m) => m.isPaid).length;
+  const dicatatCount  = membersWithStatus.filter(m => m.status === 'dicatat').length;
+  const skipCount     = state.members.length - dicatatCount;
+  const period        = getActivePeriod(state.duesSettings);
   const hasDuesConfigured = state.duesSettings.hasSaved === true;
 
   return (
     <div className="page-enter space-y-5">
 
-      {/* ── Banner Periode Iuran Aktif — hanya tampil jika pengaturan sudah disimpan ── */}
+      {/* Banner Periode Iuran Aktif — hanya tampil jika pengaturan sudah disimpan  */}
       {hasDuesConfigured && (
         <div className="bg-white rounded-2xl border border-neutral-light/30 p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -172,7 +172,7 @@ export default function AnggotaPage() {
         </div>
       )}
 
-      {/* ── Pengaturan Iuran Kas ── */}
+      {/* Pengaturan Iuran Kas  */}
       <div className="bg-white rounded-2xl p-6 border border-neutral-light/30">
         <h3 className="font-semibold text-primary mb-4 flex items-center gap-2">
           <i className="fas fa-cogs text-secondary" /> Pengaturan Iuran Kas
@@ -185,7 +185,7 @@ export default function AnggotaPage() {
           </div>
           <div>
             <label className="block text-xs font-semibold text-neutral uppercase tracking-wider mb-1.5">Nominal (Rp)</label>
-            <input type="number" step="1000" value={duesAmount} onChange={(e) => setDuesAmount(e.target.value)}
+            <input type="number" value={duesAmount} onChange={(e) => setDuesAmount(e.target.value)}
               className="input-styled w-full px-4 py-2.5 border border-neutral-light rounded-xl text-sm outline-none transition-all" />
           </div>
         </div>
@@ -196,7 +196,7 @@ export default function AnggotaPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ── Form Tambah Anggota ── */}
+        {/* Form Tambah Anggota  */}
         <div className="bg-white rounded-2xl p-6 border border-neutral-light/30">
           <h3 className="font-semibold text-primary mb-4 flex items-center gap-2">
             <i className="fas fa-user-plus text-tertiary" /> Tambah Anggota
@@ -242,7 +242,7 @@ export default function AnggotaPage() {
           </div>
         </div>
 
-        {/* ── Daftar Anggota ── */}
+        {/* Daftar Anggota  */}
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-neutral-light/30">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -278,9 +278,9 @@ export default function AnggotaPage() {
                   <tr><td colSpan="6" className="py-8 text-center text-neutral text-sm">Belum ada anggota</td></tr>
                 ) : membersWithStatus.map((m) => {
                   const statusCfg = {
-                    dicatat: { label: 'Sudah Dicatat', cls: 'bg-tertiary-50 text-tertiary', dot: 'bg-tertiary' },
-                    terlambat: { label: 'Terlambat', cls: 'bg-red-50 text-red-500', dot: 'bg-red-400' },
-                    belum: { label: 'Belum Bayar', cls: 'bg-amber-50 text-amber-600', dot: 'bg-amber-400' },
+                    dicatat:   { label: 'Sudah Dicatat', cls: 'bg-tertiary-50 text-tertiary', dot: 'bg-tertiary' },
+                    terlambat: { label: 'Terlambat',     cls: 'bg-red-50 text-red-500',       dot: 'bg-red-400' },
+                    belum:     { label: 'Belum Bayar',   cls: 'bg-amber-50 text-amber-600',   dot: 'bg-amber-400' },
                   }[m.status] || { label: 'Belum Bayar', cls: 'bg-amber-50 text-amber-600', dot: 'bg-amber-400' };
 
                   return (
@@ -307,7 +307,7 @@ export default function AnggotaPage() {
                         </span>
                       </td>
                       <td className="py-3 px-2 text-center">
-                        {/* ✅ Checkbox dinonaktifkan jika sudah dicatat — hanya bisa hapus */}
+                        {/* Checkbox dinonaktifkan jika sudah dicatat — hanya bisa hapus */}
                         <input type="checkbox"
                           className={`w-5 h-5 ${m.status === 'dicatat' ? 'cursor-not-allowed opacity-40' : 'accent-tertiary cursor-pointer'}`}
                           checked={m.isPaid}
@@ -327,7 +327,7 @@ export default function AnggotaPage() {
             </table>
           </div>
 
-          {/* ── Footer: Summary + Catat Iuran Button ── */}
+          {/* Footer: Summary + Catat Iuran Button  */}
           <div className="mt-5 pt-5 border-t border-neutral-light/50 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3 text-xs">
               <span className="flex items-center gap-1.5">
@@ -342,7 +342,7 @@ export default function AnggotaPage() {
               <span className="text-neutral-light">|</span>
               <span className="text-neutral">Total anggota: <strong className="text-neutral-dark">{state.members.length}</strong></span>
             </div>
-            {/* ✅ Disabled jika tidak ada anggota yang diceklis */}
+            {/* Disabled jika tidak ada anggota yang diceklis */}
             <button type="button" onClick={handleRecordDues}
               disabled={isRecording || paidCount === 0}
               className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-tertiary to-teal-600 text-white rounded-xl text-sm font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none">
@@ -355,7 +355,7 @@ export default function AnggotaPage() {
         </div>
       </div>
 
-      {/* ── Custom Confirm Dialog hapus anggota ── */}
+      {/* Custom Confirm Dialog hapus anggota  */}
       <ConfirmDialog
         isOpen={confirmMemberId !== null}
         title="Hapus Anggota"

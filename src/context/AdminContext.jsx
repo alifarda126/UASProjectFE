@@ -4,7 +4,7 @@ const COLORS = ['#6366F1', '#8B5CF6', '#EC4899', '#14B8A6', '#F59E0B', '#10B981'
 
 const AdminContext = createContext(null);
 
-/* ── KOMPONEN PROVIDER: State Global Khusus Admin ── */
+/* KOMPONEN PROVIDER: State Global Khusus Admin  */
 /* Mengelola seluruh data organisasi klien yang terdaftar di sistem */
 export function AdminProvider({ children }) {
   const [orgs, setOrgs] = useState([]);
@@ -19,7 +19,7 @@ export function AdminProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const hasFetchedAdmin = useRef(false);
 
-  /* ── LAPORAN KEUANGAN ADMIN ── */
+  /* LAPORAN KEUANGAN ADMIN  */
   const [laporanKeuangan, setLaporanKeuangan] = useState([]);
   const [laporanSummary, setLaporanSummary] = useState({
     total_saldo: 0,
@@ -52,7 +52,7 @@ export function AdminProvider({ children }) {
         email: org.email || '',
         phone: org.phone || '',
         description: org.description || '',
-        logo_url: org.logo_url || null,   // ✅ Logo organisasi
+        logo_url: org.logo_url || null,   // Logo organisasi
         status: org.is_active ? 'Aktif' : 'Non-aktif',
         isSuspended: org.is_suspended || false,
         suspendedReason: org.suspended_reason || '',
@@ -60,7 +60,7 @@ export function AdminProvider({ children }) {
         hasPendingBanding: org.has_pending_banding || false,
         lastActiveAt: org.last_active_at || null,
         memberCount: org.anggota_count || 0,
-        // ✅ balance sekarang dikembalikan langsung dari backend (withSum)
+        // balance sekarang dikembalikan langsung dari backend (withSum)
         balance: parseFloat(org.balance || 0),
         total_pemasukan: parseFloat(org.total_pemasukan || 0),
         total_pengeluaran: parseFloat(org.total_pengeluaran || 0),
@@ -78,7 +78,7 @@ export function AdminProvider({ children }) {
     }
   }, []);
 
-  // ✅ Fetch laporan keuangan untuk semua organisasi
+  // Fetch laporan keuangan untuk semua organisasi
   const fetchLaporanKeuangan = useCallback(async () => {
     if (!hasFetchedLaporan.current) {
       setLaporanLoading(true);
@@ -99,7 +99,7 @@ export function AdminProvider({ children }) {
     }
   }, []);
 
-  // ✅ Refresh semua data admin (dipanggil setelah ada transaksi baru)
+  // Refresh semua data admin (dipanggil setelah ada transaksi baru)
   const refreshAdminData = useCallback(async () => {
     console.log('Refreshing admin data...');
     await Promise.all([
@@ -161,7 +161,7 @@ export function AdminProvider({ children }) {
     setOrgs((prev) => prev.filter((o) => o.id !== id));
   }, []);
 
-  /* ── SUSPEND / UNSUSPEND ── */
+  /* SUSPEND / UNSUSPEND  */
   const suspendOrg = useCallback(async (id, reason) => {
     const { default: api } = await import('../utils/api');
     const res = await api.post(`/admin/organisasi/${id}/suspend`, { reason });
@@ -180,7 +180,7 @@ export function AdminProvider({ children }) {
     return res.data;
   }, []);
 
-  /* ── BANDING ── */
+  /* BANDING  */
   const [bandings, setBandings] = useState([]);
   const [bandingsLoading, setBandingsLoading] = useState(false);
 
@@ -219,7 +219,7 @@ export function AdminProvider({ children }) {
       });
     }
     
-    // ✅ Kirim event untuk refresh notifikasi di user panel (akun organisasi)
+    // Kirim event untuk refresh notifikasi di user panel (akun organisasi)
     window.dispatchEvent(new CustomEvent('notification:refresh'));
     
     return res.data;
@@ -232,18 +232,18 @@ export function AdminProvider({ children }) {
     pending:   orgs.filter((o) => o.status === 'Pending' && !o.isSuspended).length,
     nonAktif:  orgs.filter((o) => o.status === 'Non-aktif' && !o.isSuspended).length,
     suspended: orgs.filter((o) => o.isSuspended).length,
-    // ✅ totalBalance dihitung dari balance per org (backend withSum)
+    // totalBalance dihitung dari balance per org (backend withSum)
     totalBalance:
       orgs.length > 0
         ? orgs.reduce((sum, o) => sum + parseFloat(o.balance || 0), 0)
         : parseFloat(laporanSummary.total_saldo || adminStats.total_pemasukan - adminStats.total_pengeluaran || 0),
-    // ✅ totalMembers dihitung dari anggota per org
+    // totalMembers dihitung dari anggota per org
     totalMembers:
       orgs.length > 0
         ? orgs.reduce((sum, o) => sum + (o.memberCount || 0), 0)
         : (laporanSummary.total_anggota || adminStats.total_users || 0),
     pendingBandings: bandings.filter(b => b.status === 'pending').length,
-    // ✅ Total pemasukan & pengeluaran seluruh sistem
+    // Total pemasukan & pengeluaran seluruh sistem
     totalPemasukan:
       orgs.reduce((sum, o) => sum + parseFloat(o.total_pemasukan || 0), 0) ||
       parseFloat(adminStats.total_pemasukan || 0),
@@ -259,9 +259,9 @@ export function AdminProvider({ children }) {
       suspendOrg, unsuspendOrg,
       bandings, bandingsLoading, fetchBandings, resolveBanding,
       fetchAdminData, isLoading,
-      // ✅ Tambahan untuk laporan
+      // Tambahan untuk laporan
       laporanKeuangan, laporanSummary, laporanLoading, fetchLaporanKeuangan,
-      // ✅ Tambahan untuk refresh data
+      // Tambahan untuk refresh data
       refreshAdminData,
     }}>
       {children}

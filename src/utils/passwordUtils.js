@@ -1,4 +1,4 @@
-/* ── FUNGSI UTILITY: Konstanta dan pengecekan sandi ── */
+/* FUNGSI UTILITY: Konstanta dan pengecekan sandi  */
 export function getPasswordStrength(pw) {
   let s = 0;
   if (pw.length >= 8) s++;

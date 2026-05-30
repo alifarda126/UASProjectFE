@@ -66,12 +66,12 @@ export function useSessionTimeout({ onWarning, onTimeout, enabled = true }) {
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        // ── User MENINGGALKAN tab ──────────────────────────────────────
+        // User MENINGGALKAN tab 
         // Simpan waktu pergi, batalkan semua timer (tidak perlu hitung mundur)
         localStorage.setItem(STORAGE_KEY, Date.now().toString());
         clearTimers();
       } else {
-        // ── User KEMBALI ke tab ───────────────────────────────────────
+        // User KEMBALI ke tab 
         const hiddenAtStr = localStorage.getItem(STORAGE_KEY);
         localStorage.removeItem(STORAGE_KEY);
 
@@ -93,7 +93,7 @@ export function useSessionTimeout({ onWarning, onTimeout, enabled = true }) {
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // ── Cek saat komponen pertama mount (misal setelah hard-refresh) ──
+    // Cek saat komponen pertama mount (misal setelah hard-refresh) 
     // Jika ada timestamp tersimpan dari sebelum refresh
     const storedHiddenAt = localStorage.getItem(STORAGE_KEY);
     if (storedHiddenAt) {

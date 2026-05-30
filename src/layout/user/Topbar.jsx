@@ -1,4 +1,4 @@
-/* ── KOMPONEN LAYOUT: Topbar User ── */
+/* KOMPONEN LAYOUT: Topbar User  */
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { getInitials } from '../../utils/formatters';
@@ -17,7 +17,7 @@ export default function Topbar({ currentPage, onOpenModal, onToggleSidebar, unre
   const { state, user, organisasi } = useApp();
   const { profile } = state;
 
-  // ✅ Baca cache agar Topbar langsung tampil saat refresh (sebelum API selesai)
+  // Baca cache agar Topbar langsung tampil saat refresh (sebelum API selesai)
   const cachedOrg = (() => {
     try { return JSON.parse(localStorage.getItem('mf_org_cache') || '{}'); }
     catch { return {}; }

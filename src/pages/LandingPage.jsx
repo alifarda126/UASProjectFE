@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoProject from '../assets/MoneFloLogo.png';
 
-/* ── Feature card data ── */
+/* Feature card data  */
 const FEATURES = [
   {
     icon: 'fa-wallet',
@@ -48,7 +48,7 @@ const FEATURES = [
   },
 ];
 
-/* ── Steps data ── */
+/* Steps data  */
 const STEPS = [
   {
     num: '1',
@@ -76,7 +76,7 @@ const STEPS = [
   },
 ];
 
-/* ── "Why MoneFlo" highlights — cocok untuk project UAS ── */
+/* "Why MoneFlo" highlights — cocok untuk project UAS  */
 const HIGHLIGHTS = [
   {
     icon: 'fa-laptop-code',
@@ -127,7 +127,7 @@ export default function LandingPage() {
   return (
     <div className="landing-root">
 
-      {/* ══ NAVBAR ══ */}
+      {/* NAVBAR  */}
       <nav className={`landing-nav ${scrolled ? 'landing-nav--scrolled' : ''}`}>
         <div className="landing-nav__inner landing-container">
           {/* Logo — pojok kiri */}
@@ -172,7 +172,7 @@ export default function LandingPage() {
         )}
       </nav>
 
-      {/* ══ HERO ══ */}
+      {/* HERO  */}
       <section className="landing-hero">
         <div className="landing-hero__blob landing-hero__blob--1" />
         <div className="landing-hero__blob landing-hero__blob--2" />
@@ -314,7 +314,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ FEATURES ══ */}
+      {/* FEATURES  */}
       <section id="fitur" className="landing-section">
         <div className="landing-container">
           <div className="landing-section-header">
@@ -339,7 +339,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ HOW IT WORKS ══ */}
+      {/* HOW IT WORKS  */}
       <section id="cara-kerja" className="landing-section landing-section--alt">
         <div className="landing-container">
           <div className="landing-section-header">
@@ -350,8 +350,9 @@ export default function LandingPage() {
           </div>
 
           <div className="landing-steps-v2">
-            {/* Connector line antara step */}
-            <div className="landing-steps-v2__line" />
+            {/* Connector lines antara step — dipecah agar tidak memotong circle tengah */}
+            <div className="landing-steps-v2__line landing-steps-v2__line--left" />
+            <div className="landing-steps-v2__line landing-steps-v2__line--right" />
 
             {STEPS.map((s, i) => (
               <div key={i} className="landing-step-v2">
@@ -371,7 +372,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ TENTANG (ganti Testimoni) ══ */}
+      {/* TENTANG (ganti Testimoni)  */}
       <section id="tentang" className="landing-section">
         <div className="landing-container">
           <div className="landing-section-header">
@@ -399,7 +400,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ CTA ══ */}
+      {/* CTA  */}
       <section className="landing-cta-section">
         <div className="landing-cta-blob landing-cta-blob--1" />
         <div className="landing-cta-blob landing-cta-blob--2" />
@@ -421,7 +422,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══ FOOTER ══ */}
+      {/* FOOTER  */}
       <footer className="landing-footer">
         <div className="landing-container landing-footer__inner">
           <div className="landing-footer__brand">
@@ -430,7 +431,7 @@ export default function LandingPage() {
               <span className="landing-footer__logo-text">MoneFlo</span>
             </div>
             <p className="landing-footer__tagline">
-              Platform pengelolaan keuangan organisasi yang modern, aman, dan mudah digunakan.
+              Platform pengelolaan keuangan organisasi yang modern, aman, transparan, efisien, dan mudah digunakan untuk mendukung pengelolaan data serta transaksi keuangan secara lebih terstruktur.
             </p>
           </div>
 
@@ -452,7 +453,7 @@ export default function LandingPage() {
 
         <div className="landing-footer__bottom">
           <div className="landing-container landing-footer__bottom-inner">
-            <span>© {new Date().getFullYear()} MoneFlo — Aplikasi Web Pengelola Keuangan Organisasi</span>
+            <span> {new Date().getFullYear()} MoneFlo — Aplikasi Web Pengelola Keuangan Organisasi</span>
             <span>Dibangun dengan Teknologi web modern</span>
           </div>
         </div>

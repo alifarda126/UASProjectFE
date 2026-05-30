@@ -1,4 +1,4 @@
-/* ── KOMPONEN MODAL: Form tambah/edit organisasi (Admin) ── */
+/* KOMPONEN MODAL: Form tambah/edit organisasi (Admin)  */
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useAdmin } from '../../context/AdminContext';

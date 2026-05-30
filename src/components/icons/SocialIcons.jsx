@@ -1,4 +1,4 @@
-/* ── KOMPONEN: SocialIcons — Ikon-ikon provider OAuth ── */
+/* KOMPONEN: SocialIcons — Ikon-ikon provider OAuth  */
 
 /**
  * GoogleIcon — SVG ikon resmi Google untuk tombol "Login dengan Google".

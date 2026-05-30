@@ -9,7 +9,7 @@ import { SkeletonBeranda } from '../../components/Skeleton';
 
 Chart.register(...registerables);
 
-/* ── FUNGSI UTILITY: Mengelompokkan data pemasukan & pengeluaran untuk 6 bulan terakhir ── */
+/* FUNGSI UTILITY: Mengelompokkan data pemasukan & pengeluaran untuk 6 bulan terakhir  */
 /* Digunakan untuk menyuplai data pada grafik Bar Chart */
 function buildLast6Months(transactions) {
   const now = new Date();
@@ -32,14 +32,14 @@ function buildLast6Months(transactions) {
   return months;
 }
 
-/* ── FUNGSI UTILITY: Memformat angka pada sumbu Y di grafik agar lebih ringkas (contoh: 1000000 jadi Rp1jt) ── */
+/* FUNGSI UTILITY: Memformat angka pada sumbu Y di grafik agar lebih ringkas (contoh: 1000000 jadi Rp1jt)  */
 function smartTick(v) {
   if (v >= 1_000_000) return 'Rp' + (v / 1_000_000).toFixed(v % 1_000_000 === 0 ? 0 : 1) + 'jt';
   if (v >= 1_000)     return 'Rp' + (v / 1_000).toFixed(0) + 'rb';
   return 'Rp' + v;
 }
 
-/* ── FUNGSI UTILITY: Menentukan batas maksimal sumbu Y pada grafik, diberi headroom 25% agar visual lebih rapi ── */
+/* FUNGSI UTILITY: Menentukan batas maksimal sumbu Y pada grafik, diberi headroom 25% agar visual lebih rapi  */
 function smartMax(maxVal) {
   if (maxVal <= 0) return 100_000;
   const mag = Math.pow(10, Math.floor(Math.log10(maxVal)));
@@ -47,7 +47,7 @@ function smartMax(maxVal) {
   return nice * 1.25; // 25% headroom
 }
 
-/* ── KOMPONEN UTAMA: Halaman Beranda (Dashboard User) ── */
+/* KOMPONEN UTAMA: Halaman Beranda (Dashboard User)  */
 export default function BerandaPage() {
   const navigate = useNavigate();
   const { openModal } = useOutletContext();
@@ -72,7 +72,7 @@ export default function BerandaPage() {
   const hasChartData = months6.some(m => m.income > 0 || m.expense > 0);
   const maxVal = Math.max(...months6.map(m => Math.max(m.income, m.expense)));
 
-  /* ── BAGIAN CHART: Inisialisasi dan Render Chart.js ── */
+  /* BAGIAN CHART: Inisialisasi dan Render Chart.js  */
   useEffect(() => {
     if (chartInstance.current) { chartInstance.current.destroy(); chartInstance.current = null; }
     if (!hasChartData) return;
@@ -109,15 +109,15 @@ export default function BerandaPage() {
 
   const colors = ['#00695C', '#083D56', '#00897B', '#546E7A', '#78909C', '#0C5272'];
 
-  // ✅ Tampilkan skeleton saat data pertama kali dimuat (ditempatkan setelah semua hooks)
+  // Tampilkan skeleton saat data pertama kali dimuat (ditempatkan setelah semua hooks)
   if (isDataLoading && state.transactions.length === 0) return <SkeletonBeranda />;
 
   return (
     <div className="page-enter space-y-6">
-      {/* ── KARTU STATISTIK: Menampilkan Saldo, Pemasukan & Pengeluaran ── */}
+      {/* KARTU STATISTIK: Menampilkan Saldo, Pemasukan & Pengeluaran  */}
       <StatCards stats={stats} />
 
-      {/* ── BARIS PERTAMA: Berisi Grafik (Kiri) dan Realisasi Anggaran (Kanan) ── */}
+      {/* BARIS PERTAMA: Berisi Grafik (Kiri) dan Realisasi Anggaran (Kanan)  */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-neutral-light/30">
           <h3 className="font-semibold text-primary mb-4 text-sm">Pemasukan &amp; Pengeluaran 6 Bulan Terakhir</h3>
@@ -132,7 +132,7 @@ export default function BerandaPage() {
           )}
         </div>
 
-        {/* ── BAGIAN KANAN: Daftar Realisasi Anggaran (Progress Bar Program) ── */}
+        {/* BAGIAN KANAN: Daftar Realisasi Anggaran (Progress Bar Program)  */}
         <div className="bg-white rounded-2xl p-5 border border-neutral-light/30">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-primary text-sm">Realisasi Anggaran</h3>
@@ -170,7 +170,7 @@ export default function BerandaPage() {
         </div>
       </div>
 
-      {/* ── BARIS KEDUA: Berisi Transaksi Terakhir (Kiri) dan Agenda Pembayaran (Kanan) ── */}
+      {/* BARIS KEDUA: Berisi Transaksi Terakhir (Kiri) dan Agenda Pembayaran (Kanan)  */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-neutral-light/30">
           <div className="flex items-center justify-between mb-4">
@@ -212,7 +212,7 @@ export default function BerandaPage() {
           </div>
         </div>
 
-        {/* ── BAGIAN KANAN BAWAH: Panel Agenda Pembayaran ── */}
+        {/* BAGIAN KANAN BAWAH: Panel Agenda Pembayaran  */}
         <div className="bg-white rounded-2xl p-5 border border-neutral-light/30">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-primary text-sm">Agenda Pembayaran</h3>
@@ -225,13 +225,13 @@ export default function BerandaPage() {
         </div>
       </div>
 
-      {/* ── Modal Bukti Transaksi ── */}
+      {/* Modal Bukti Transaksi  */}
       <BuktiViewerModal txn={viewBuktiTxn} onClose={() => setViewBuktiTxn(null)} />
     </div>
   );
 }
 
-/* ── SUB-KOMPONEN: List Item untuk Agenda Pembayaran ── */
+/* SUB-KOMPONEN: List Item untuk Agenda Pembayaran  */
 /* Menerima props onOpenModal untuk mengedit agenda */
 function AgendaList({ onOpenModal }) {
   const { state, deleteAgenda } = useApp();

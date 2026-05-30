@@ -6,7 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 import GoogleIcon from '../../components/icons/SocialIcons';
 import logoProject from '../../assets/MoneFloLogo.png';
 
-/* ── KOMPONEN UTAMA: Halaman Login (Autentikasi) ── */
+/* KOMPONEN UTAMA: Halaman Login (Autentikasi)  */
 export default function LoginPage() {
   const showToast = useToast();
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ export default function LoginPage() {
     }
   }, []);
 
-  /* ── FUNGSI HANDLER: Memvalidasi dan memproses percobaan login manual ── */
+  /* FUNGSI HANDLER: Memvalidasi dan memproses percobaan login manual  */
   const handleLogin = async () => {
     if (!email || !pass) { 
       showToast('Harap isi email dan kata sandi', 'error'); 
@@ -73,9 +73,17 @@ export default function LoginPage() {
 
       showToast('Berhasil masuk!', 'success');
       
-      // Dispatch event global supaya App.jsx fetch ulang user lalu redirect ke dashboard
+      // Dispatch event global supaya AppContext nge-fetch ulang user (atau redirect lgsg)
       window.dispatchEvent(new CustomEvent('auth:login_success'));
-
+      
+      // Tunggu sebentar supaya state auth ke-update
+      setTimeout(() => {
+        if (response.data.user.role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
+      }, 500);
 
     } catch (error) {
       const msg = error.response?.data?.message || 'Terjadi kesalahan saat login';
@@ -88,7 +96,7 @@ export default function LoginPage() {
   return (
     <div className="auth-bg flex items-center justify-center p-4 min-h-screen">
       <div className="w-full max-w-md relative z-10">
-        {/* ── BAGIAN ATAS: Logo & Tagline Sistem ── */}
+        {/* BAGIAN ATAS: Logo & Tagline Sistem  */}
         <div className="text-center mb-8">
           <div className="inline-flex w-14 h-14 rounded-lg items-center justify-center flex-shrink-0 overflow-hidden">
             <img src={logoSrc} alt="Logo MoneFlo" className="w-full h-full object-contain" />
@@ -108,7 +116,7 @@ export default function LoginPage() {
           <p className="text-sm text-neutral mb-6">Kelola keuangan organisasi Anda dengan mudah.</p>
 
           <div className="space-y-4">
-            {/* ── INPUT FORM: Email & Kata Sandi ── */}
+            {/* INPUT FORM: Email & Kata Sandi  */}
             <div>
               <label className="block text-sm font-medium text-neutral-dark mb-1.5">Email</label>
               <input

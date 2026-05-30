@@ -1,4 +1,4 @@
-/* ── KONFIGURASI AXIOS: Instance HTTP client untuk komunikasi dengan backend MoneFlo ── */
+/* KONFIGURASI AXIOS: Instance HTTP client untuk komunikasi dengan backend MoneFlo  */
 import axios from 'axios';
 
 /**
@@ -18,7 +18,7 @@ const api = axios.create({
   timeout: 30000, // Timeout 30 detik (Railway cold start bisa lambat)
 });
 
-/* ── REQUEST INTERCEPTOR ── */
+/* REQUEST INTERCEPTOR  */
 api.interceptors.request.use(
   (config) => {
     // Bisa tambahkan logic global sebelum request dikirim
@@ -27,7 +27,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-/* ── RESPONSE INTERCEPTOR ── */
+/* RESPONSE INTERCEPTOR  */
 api.interceptors.response.use(
   // Jika sukses, langsung kembalikan response
   (response) => response,

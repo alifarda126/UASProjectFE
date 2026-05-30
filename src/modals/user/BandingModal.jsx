@@ -1,4 +1,4 @@
-/* ── KOMPONEN MODAL: Form Pengajuan Banding Organisasi (User Side) ── */
+/* KOMPONEN MODAL: Form Pengajuan Banding Organisasi (User Side)  */
 /* Ditampilkan saat organisasi user tersuspend; user dapat ajukan banding dengan pesan + bukti foto */
 import { useState } from 'react';
 import api from '../../utils/api';

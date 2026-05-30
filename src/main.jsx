@@ -1,6 +1,6 @@
-/* ── ENTRY POINT: File utama React yang di-render ke DOM ── */
+/* ENTRY POINT: File utama React yang di-render ke DOM  */
 
-// ── SPA Redirect Handler (Cloudflare Pages 404 fallback) ──
+// SPA Redirect Handler (Cloudflare Pages 404 fallback) 
 // Ketika user refresh di /login atau /dashboard, Cloudflare Pages
 // menyajikan 404.html yang menyimpan path asli ke sessionStorage,
 // lalu redirect ke /. Di sini kita restore path-nya sebelum React render.

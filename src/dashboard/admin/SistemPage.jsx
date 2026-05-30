@@ -4,12 +4,12 @@ import { useToast } from '../../context/ToastContext';
 import defaultLogo  from '../../assets/MoneFloLogo.png';
 import defaultLogo2 from '../../assets/MoneFloLogo2.png';
 
-/* ── FUNGSI UTILITY: Mengonversi file gambar yang diunggah menjadi format Data URL (Base64) ── */
+/* FUNGSI UTILITY: Mengonversi file gambar yang diunggah menjadi format Data URL (Base64)  */
 function readFileAsDataURL(file) {
   return new Promise((res, rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = rej; r.readAsDataURL(file); });
 }
 
-/* ── SUB-KOMPONEN: Kontainer Section dengan Header ── */
+/* SUB-KOMPONEN: Kontainer Section dengan Header  */
 /* Membungkus kelompok pengaturan (misal: Identitas, Logo, dll) agar UI rapi */
 function Section({ title, icon, children, accent = 'teal' }) {
   const c = {
@@ -30,18 +30,18 @@ function Section({ title, icon, children, accent = 'teal' }) {
   );
 }
 
-/* ── SUB-KOMPONEN: Form Row ── */
+/* SUB-KOMPONEN: Form Row  */
 /* Struktur dasar label dan deskripsi kecil untuk setiap input form */
 function FRow({ label, hint, children }) {
   return <div><label className="block text-slate-600 text-sm font-medium mb-1.5">{label}</label>{children}{hint && <p className="text-slate-600 text-xs mt-1.5">{hint}</p>}</div>;
 }
 
-/* ── SUB-KOMPONEN: Text Input Custom ── */
+/* SUB-KOMPONEN: Text Input Custom  */
 function TInput({ value, onChange, placeholder, maxLength, type = 'text' }) {
   return <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} maxLength={maxLength} className="admin-input w-full px-4 py-2.5 rounded-xl text-sm" />;
 }
 
-/* ── SUB-KOMPONEN: Toggle/Switch Button ── */
+/* SUB-KOMPONEN: Toggle/Switch Button  */
 /* Digunakan untuk pengaturan on/off seperti 'Pendaftaran Dibuka/Ditutup' */
 function Toggle({ checked, onChange, label, desc }) {
   return (
@@ -54,7 +54,7 @@ function Toggle({ checked, onChange, label, desc }) {
   );
 }
 
-/* ── SUB-KOMPONEN: Area Drag-and-Drop Gambar ── */
+/* SUB-KOMPONEN: Area Drag-and-Drop Gambar  */
 /* Memungkinkan admin mengubah logo/ikon dengan klik atau seret (drag) file */
 function UploadZone({ currentUrl, fallbackSrc, hint, onUpload, onClear }) {
   const ref = useRef(null);
@@ -83,7 +83,7 @@ function UploadZone({ currentUrl, fallbackSrc, hint, onUpload, onClear }) {
   );
 }
 
-/* ── SUB-KOMPONEN: Panel Live Preview ── */
+/* SUB-KOMPONEN: Panel Live Preview  */
 /* Menampilkan simulasi tampilan hasil konfigurasi sistem secara real-time */
 function LivePreview({ d, s }) {
   const ls = d.logoUrl || defaultLogo;
@@ -131,7 +131,7 @@ function LivePreview({ d, s }) {
   );
 }
 
-/* ── KOMPONEN UTAMA: Halaman Konfigurasi Sistem ── */
+/* KOMPONEN UTAMA: Halaman Konfigurasi Sistem  */
 /* Admin dapat mengubah branding aplikasi (nama, logo) serta toggle pengaturan global */
 export default function SistemPage() {
   const { settings, updateSettings, resetSettings } = useSystem();

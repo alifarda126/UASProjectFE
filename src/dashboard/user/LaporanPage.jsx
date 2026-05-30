@@ -12,7 +12,7 @@ import { SkeletonLaporan } from '../../components/Skeleton';
 
 Chart.register(...registerables);
 
-/* ── Helper: bangun data 6 bulan terakhir ── */
+/* Helper: bangun data 6 bulan terakhir  */
 function buildLast6Months(transactions) {
   const now = new Date();
   const months = [];
@@ -34,7 +34,7 @@ function buildLast6Months(transactions) {
   return months;
 }
 
-/* ── Smart Y-axis formatting ── */
+/* Smart Y-axis formatting  */
 function smartTick(v) {
   if (v >= 1_000_000) return 'Rp' + (v / 1_000_000).toFixed(v % 1_000_000 === 0 ? 0 : 1) + 'jt';
   if (v >= 1_000) return 'Rp' + (v / 1_000).toFixed(0) + 'rb';
@@ -47,7 +47,7 @@ function smartMax(maxVal) {
   return Math.ceil(maxVal / mag) * mag * 1.25;
 }
 
-/* ── Warna per kategori pengeluaran ── */
+/* Warna per kategori pengeluaran  */
 const CAT_COLORS = {
   Operasional: '#083D56', Event: '#00695C', Sponsor: '#0C5272',
   Logistik: '#546E7A', Kepegawaian: '#00897B', Lainnya: '#78909C',
@@ -102,7 +102,7 @@ export default function LaporanPage() {
   }, [state.transactions]);
   const totalAlloc = allocations.reduce((s, a) => s + a.amount, 0);
 
-  /* ── Arus Kas Chart (Revisi Anti-Kedip) ── */
+  /* Arus Kas Chart (Revisi Anti-Kedip)  */
   useEffect(() => {
     // 1. Pastikan canvas sudah dirender di DOM
     if (!hasChartData || !chartRef.current) return;
@@ -219,7 +219,7 @@ export default function LaporanPage() {
     };
   }, []);
 
-  /* ── Export CSV ── */
+  /* Export CSV  */
   const exportCSV = () => {
     if (!tableData || tableData.length === 0) {
       showToast('Tidak ada data untuk diekspor', 'warning');
@@ -240,7 +240,7 @@ export default function LaporanPage() {
     URL.revokeObjectURL(url);
   };
 
-  /* ── Export PDF ── */
+  /* Export PDF  */
   const exportPDF = useCallback(() => {
     let imgUrl = null;
     if (chartRef.current && isChartReady) {
@@ -252,7 +252,7 @@ export default function LaporanPage() {
     setTimeout(() => window.print(), 150);
   }, [isChartReady]);
 
-  /* ── Hapus transaksi ── */
+  /* Hapus transaksi  */
   const handleDelete = (id) => setConfirmId(id);
 
   const handleDeleteConfirm = async () => {
@@ -303,7 +303,7 @@ export default function LaporanPage() {
         }
       />
 
-      {/* ── Chart + Alokasi ── */}
+      {/* Chart + Alokasi  */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 bg-white rounded-2xl p-5 border border-neutral-light/30">
           <h3 className="font-semibold text-primary mb-4">Visualisasi Arus Kas</h3>
@@ -356,7 +356,7 @@ export default function LaporanPage() {
         </div>
       </div>
 
-      {/* ── Tabel Transaksi ── */}
+      {/* Tabel Transaksi  */}
       <TableWrapper>
         <TransactionTable
           data={tableData}
@@ -366,7 +366,7 @@ export default function LaporanPage() {
         />
       </TableWrapper>
 
-      {/* ── Hidden Print Layout ── */}
+      {/* Hidden Print Layout  */}
       <PrintLayout
         organisasi={organisasi}
         stats={stats}
@@ -376,7 +376,7 @@ export default function LaporanPage() {
         chartImageUrl={chartImageUrl}
       />
 
-      {/* ── Custom Confirm Dialog ── */}
+      {/* Custom Confirm Dialog  */}
       <ConfirmDialog
         isOpen={confirmId !== null}
         title="Hapus Transaksi"

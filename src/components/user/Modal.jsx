@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 /**
- * ── KOMPONEN REUSABLE: Wrapper Modal (Popup) ──
+ *  KOMPONEN REUSABLE: Wrapper Modal (Popup) 
  * Digunakan secara luas di seluruh aplikasi untuk menampilkan form atau detail dalam bentuk overlay.
  * 
  * @param {boolean} isOpen - Menentukan apakah modal sedang tampil atau sembunyi.
@@ -11,7 +11,7 @@ import { useEffect } from 'react';
  * @param {string} align - Posisi modal (misal: 'center' atau 'top-right').
  */
 export default function Modal({ isOpen, onClose, children, maxWidth = 'max-w-lg', align = 'center' }) {
-  /* ── Mencegah background halaman ikut ter-scroll ketika modal sedang terbuka ── */
+  /* Mencegah background halaman ikut ter-scroll ketika modal sedang terbuka  */
   useEffect(() => {
     if (isOpen) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = '';

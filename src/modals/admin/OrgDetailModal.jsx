@@ -1,4 +1,4 @@
-/* ── KOMPONEN MODAL: Menampilkan detail organisasi (Admin) ── */
+/* KOMPONEN MODAL: Menampilkan detail organisasi (Admin)  */
 import { createPortal } from 'react-dom';
 const fmt = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
 

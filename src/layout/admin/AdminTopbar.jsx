@@ -1,4 +1,4 @@
-/* ── KOMPONEN LAYOUT: Topbar Khusus Admin ── */
+/* KOMPONEN LAYOUT: Topbar Khusus Admin  */
 import { useAuth } from '../../hooks/useAuth';
 
 const PAGE_TITLES = {

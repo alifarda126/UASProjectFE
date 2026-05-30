@@ -5,7 +5,7 @@ import OtpInput from '../../components/user/OtpInput';
 import PasswordStrengthBars from '../../components/user/PasswordStrengthBars';
 import { getPasswordStrength } from '../../utils/passwordUtils';
 
-/* ── KOMPONEN UTAMA: Halaman Pengaturan (User) ── */
+/* KOMPONEN UTAMA: Halaman Pengaturan (User)  */
 /* Tempat pengurus mengubah sandi, mengelola email, dan memantau riwayat sesi (perangkat/browser aktif) */
 export default function PengaturanPage() {
   const showToast = useToast();
@@ -34,7 +34,7 @@ export default function PengaturanPage() {
     fetchSession();
   }, []);
 
-  // ── State untuk Ubah Email ──────────────────────────────────────────
+  // State untuk Ubah Email 
   const [emailStepUbah,  setEmailStepUbah]  = useState(1);
   const [currentEmail,   setCurrentEmail]   = useState('');
   const [newEmail,       setNewEmail]       = useState('');
@@ -499,7 +499,7 @@ export default function PengaturanPage() {
         )}
       </div>
 
-      {/* ── Ubah Email ─────────────────────────────────────────────────── */}
+      {/* Ubah Email  */}
       {user?.provider !== 'google' && (
       <div className="bg-white rounded-2xl p-6 border border-neutral-light/30">
         <h3 className="font-semibold text-primary mb-5 flex items-center gap-2">

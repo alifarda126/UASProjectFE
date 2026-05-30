@@ -16,7 +16,7 @@ const STATUS_STYLE = {
 const ORG_TYPES    = ['Semua', 'Kemahasiswaan', 'Himpunan Mahasiswa', 'Unit Kegiatan Mahasiswa', 'OSIS', 'Lembaga', 'Komunitas', 'Yayasan', 'Lainnya'];
 const ORG_STATUSES = ['Semua', 'Aktif', 'Pending', 'Non-aktif', 'Tersuspend'];
 
-/* ── SUB-KOMPONEN: Dropdown Custom Tema Admin ── */
+/* SUB-KOMPONEN: Dropdown Custom Tema Admin  */
 /* Digunakan untuk filter pencarian dengan UI yang lebih elegan dibandingkan <select> bawaan HTML */
 function AdminSelect({ value, onChange, options }) {
   const [open, setOpen] = useState(false);
@@ -52,7 +52,7 @@ function AdminSelect({ value, onChange, options }) {
   );
 }
 
-/* ── SUB-KOMPONEN: Modal Konfirmasi Penghapusan ── */
+/* SUB-KOMPONEN: Modal Konfirmasi Penghapusan  */
 /* Muncul sebagai peringatan terakhir sebelum admin menghapus organisasi secara permanen */
 function ConfirmDeleteModal({ org, onConfirm, onCancel }) {
   if (!org) return null;
@@ -79,7 +79,7 @@ function ConfirmDeleteModal({ org, onConfirm, onCancel }) {
   );
 }
 
-/* ── SUB-KOMPONEN: Baris Tabel Daftar Organisasi ── */
+/* SUB-KOMPONEN: Baris Tabel Daftar Organisasi  */
 /* Menampilkan data per-organisasi beserta tombol aksi (Lihat, Edit, Suspend/Unsuspend, Hapus) yang muncul saat di-hover */
 function OrgRow({ org, onDetail, onEdit, onDelete, onSuspend, onUnsuspend }) {
   const initials = org.name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
@@ -154,7 +154,7 @@ function OrgRow({ org, onDetail, onEdit, onDelete, onSuspend, onUnsuspend }) {
   );
 }
 
-/* ── KOMPONEN UTAMA: Halaman Manajemen Organisasi ── */
+/* KOMPONEN UTAMA: Halaman Manajemen Organisasi  */
 /* Tempat admin dapat menambah, mengedit, menghapus, suspend, serta mencari/memfilter organisasi */
 export default function OrganisasiPage() {
   const { orgs, deleteOrg, suspendOrg, unsuspendOrg, fetchAdminData, isLoading } = useAdmin();
@@ -172,7 +172,7 @@ export default function OrganisasiPage() {
   const [deleteTarget,  setDeleteTarget]  = useState(null);
   const [suspendTarget, setSuspendTarget] = useState(null);
 
-  /* ── FILTERING DATA: Menyaring data organisasi berdasarkan teks pencarian, tipe, dan status ── */
+  /* FILTERING DATA: Menyaring data organisasi berdasarkan teks pencarian, tipe, dan status  */
   const filtered = orgs.filter((o) => {
     const q = search.toLowerCase();
     const matchSearch = !q || o.name.toLowerCase().includes(q) || (o.email || '').toLowerCase().includes(q) || o.type.toLowerCase().includes(q);
@@ -219,7 +219,7 @@ export default function OrganisasiPage() {
 
   return (
     <div className="space-y-5">
-      {/* ── HEADER BAGIAN ATAS: Judul dan Tombol Tambah ── */}
+      {/* HEADER BAGIAN ATAS: Judul dan Tombol Tambah  */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h2 className="text-slate-800 font-display font-bold text-xl">Manajemen Organisasi</h2>
@@ -231,7 +231,7 @@ export default function OrganisasiPage() {
         </button>
       </div>
 
-      {/* ── BARIS FILTER & PENCARIAN ── */}
+      {/* BARIS FILTER & PENCARIAN  */}
       <div className="admin-card rounded-2xl p-4 relative z-20">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1 min-w-0 max-w-[420px]">
@@ -250,7 +250,7 @@ export default function OrganisasiPage() {
         </div>
       </div>
 
-      {/* ── TABEL UTAMA ORGANISASI ── */}
+      {/* TABEL UTAMA ORGANISASI  */}
       <div className="admin-card rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -310,7 +310,7 @@ export default function OrganisasiPage() {
         )}
       </div>
 
-      {/* ── RENDER MODALS: Tersembunyi hingga state open menjadi true ── */}
+      {/* RENDER MODALS: Tersembunyi hingga state open menjadi true  */}
       <OrgFormModal isOpen={modalForm.open} org={modalForm.org} onClose={() => setModalForm({ open: false, org: null })} />
       <OrgDetailModal isOpen={modalDetail.open} org={modalDetail.org} onClose={() => setModalDetail({ open: false, org: null })}
         onEdit={(o) => { setModalDetail({ open: false, org: null }); setModalForm({ open: true, org: o }); }}

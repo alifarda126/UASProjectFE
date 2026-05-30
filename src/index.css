@@ -1180,15 +1180,22 @@ input[type="date"][class*="input-styled"]::-webkit-calendar-picker-indicator {
   gap: 32px;
   position: relative;
 }
-/* Garis horizontal penghubung antar step (di belakang circle) */
+/* Garis horizontal penghubung antar step — dipecah jadi 2 segmen agar tidak memotong circle tengah */
 .landing-steps-v2__line {
   position: absolute;
   top: 44px; /* setengah tinggi circle (88px/2) */
-  left: calc(16.67% + 44px); /* mulai dari tengah circle pertama */
-  right: calc(16.67% + 44px); /* berakhir di tengah circle ketiga */
   height: 2px;
-  background: linear-gradient(90deg, #00897B33, #0C527233, #6B48D933);
   z-index: 0;
+}
+.landing-steps-v2__line--left {
+  left: calc(16.67% + 44px);   /* dari tepi kanan circle pertama */
+  right: calc(50% + 44px);     /* sampai tepi kiri circle kedua */
+  background: linear-gradient(90deg, #00897B33, #0C527233);
+}
+.landing-steps-v2__line--right {
+  left: calc(50% + 44px);      /* dari tepi kanan circle kedua */
+  right: calc(16.67% + 44px);  /* sampai tepi kiri circle ketiga */
+  background: linear-gradient(90deg, #0C527233, #6B48D933);
 }
 .landing-step-v2 {
   display: flex;
