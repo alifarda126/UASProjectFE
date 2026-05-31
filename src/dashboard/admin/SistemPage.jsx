@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useSystem, DEFAULTS } from '../../context/SystemContext';
 import { useToast } from '../../context/ToastContext';
-import defaultLogo  from '../../assets/MoneFloLogo.png';
-import defaultLogo2 from '../../assets/MoneFloLogo2.png';
+import defaultLogo  from '../../assets/MoneFloLogo.webp';
+import defaultLogo2 from '../../assets/MoneFloLogo2.webp';
 
 /* FUNGSI UTILITY: Mengonversi file gambar yang diunggah menjadi format Data URL (Base64)  */
 function readFileAsDataURL(file) {

@@ -4,7 +4,7 @@ import { useToast } from '../../context/ToastContext';
 import { useSystem } from '../../context/SystemContext';
 import { useAuth } from '../../hooks/useAuth';
 import GoogleIcon from '../../components/icons/SocialIcons';
-import logoProject from '../../assets/MoneFloLogo.png';
+import logoProject from '../../assets/MoneFloLogo.webp';
 
 /* KOMPONEN UTAMA: Halaman Login (Autentikasi)  */
 export default function LoginPage() {

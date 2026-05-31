@@ -1,0 +1,11 @@
+# MoneFlo - Robots.txt
+# Mengizinkan Google dan crawler lain mengindeks halaman publik
+
+User-agent: *
+Allow: /
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /auth/
+
+# Sitemap
+Sitemap: https://moneflo.pages.dev/sitemap.xml

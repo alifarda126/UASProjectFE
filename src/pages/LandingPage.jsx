@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import logoProject from '../assets/MoneFloLogo.png';
+import logoProject from '../assets/MoneFloLogo.webp';
 
 /* Feature card data  */
 const FEATURES = [
@@ -125,14 +125,15 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="landing-root">
+    <div className="landing-root" role="document">
 
       {/* NAVBAR  */}
-      <nav className={`landing-nav ${scrolled ? 'landing-nav--scrolled' : ''}`}>
+      <header>
+      <nav className={`landing-nav ${scrolled ? 'landing-nav--scrolled' : ''}`} aria-label="Navigasi utama MoneFlo">
         <div className="landing-nav__inner landing-container">
           {/* Logo — pojok kiri */}
           <div className="landing-nav__logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <img src={logoProject} alt="MoneFlo" className="landing-nav__logo-img" />
+            <img src={logoProject} alt="MoneFlo - Sistem Keuangan Organisasi" className="landing-nav__logo-img" />
             <span className="landing-nav__logo-text">MoneFlo</span>
           </div>
 
@@ -171,9 +172,11 @@ export default function LandingPage() {
           </div>
         )}
       </nav>
+      </header>
 
       {/* HERO  */}
-      <section className="landing-hero">
+      <main>
+      <section className="landing-hero" aria-label="Hero - Pengenalan MoneFlo">
         <div className="landing-hero__blob landing-hero__blob--1" />
         <div className="landing-hero__blob landing-hero__blob--2" />
         <div className="landing-hero__blob landing-hero__blob--3" />
@@ -315,7 +318,7 @@ export default function LandingPage() {
       </section>
 
       {/* FEATURES  */}
-      <section id="fitur" className="landing-section">
+      <section id="fitur" className="landing-section" aria-label="Fitur Unggulan MoneFlo">
         <div className="landing-container">
           <div className="landing-section-header">
             <div className="landing-badge">Fitur Unggulan</div>
@@ -340,7 +343,7 @@ export default function LandingPage() {
       </section>
 
       {/* HOW IT WORKS  */}
-      <section id="cara-kerja" className="landing-section landing-section--alt">
+      <section id="cara-kerja" className="landing-section landing-section--alt" aria-label="Cara Kerja MoneFlo">
         <div className="landing-container">
           <div className="landing-section-header">
             <div className="landing-badge">Cara Kerja</div>
@@ -373,7 +376,7 @@ export default function LandingPage() {
       </section>
 
       {/* TENTANG (ganti Testimoni)  */}
-      <section id="tentang" className="landing-section">
+      <section id="tentang" className="landing-section" aria-label="Tentang MoneFlo">
         <div className="landing-container">
           <div className="landing-section-header">
             <div className="landing-badge">Tentang Aplikasi</div>
@@ -401,7 +404,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA  */}
-      <section className="landing-cta-section">
+      <section className="landing-cta-section" aria-label="Ajakan Daftar MoneFlo">
         <div className="landing-cta-blob landing-cta-blob--1" />
         <div className="landing-cta-blob landing-cta-blob--2" />
         <div className="landing-container landing-cta-content">
@@ -421,13 +424,14 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </main>
 
       {/* FOOTER  */}
       <footer className="landing-footer">
         <div className="landing-container landing-footer__inner">
           <div className="landing-footer__brand">
             <div className="landing-footer__logo">
-              <img src={logoProject} alt="MoneFlo" style={{ width: 32, height: 32, objectFit: 'contain' }} />
+              <img src={logoProject} alt="MoneFlo - Logo Sistem Keuangan Organisasi" style={{ width: 32, height: 32, objectFit: 'contain' }} />
               <span className="landing-footer__logo-text">MoneFlo</span>
             </div>
             <p className="landing-footer__tagline">

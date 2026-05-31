@@ -2,12 +2,89 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/src/assets/MoneFloLogo2.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MoneFlo - Sistem Keuangan Organisasi</title>
-    <meta name="description" content="MoneFlo — Sistem Keuangan Organisasi yang modern dan mudah digunakan." />
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
 
-    <!-- FontAwesome & Google Fonts -->
+    <!-- ══ Judul & Deskripsi SEO ══ -->
+    <title>MoneFlo - Sistem Keuangan Organisasi | Kelola Keuangan Lebih Cerdas</title>
+    <meta name="description" content="MoneFlo adalah platform pengelolaan keuangan organisasi berbasis web yang modern, aman, dan mudah digunakan. Catat transaksi, pantau arus kas, kelola iuran anggota, dan buat laporan keuangan profesional secara real-time." />
+    <meta name="keywords" content="pengelolaan keuangan organisasi, aplikasi keuangan organisasi, sistem keuangan, manajemen keuangan, pencatatan keuangan, laporan keuangan, iuran anggota, arus kas organisasi, MoneFlo, keuangan online, aplikasi kas organisasi" />
+    <meta name="author" content="MoneFlo" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="theme-color" content="#083D56" />
+    <meta name="color-scheme" content="light" />
+    <meta name="application-name" content="MoneFlo" />
+
+    <!-- ══ Canonical & Alternate ══ -->
+    <link rel="canonical" href="https://moneflo.pages.dev/" />
+    <link rel="alternate" hreflang="id" href="https://moneflo.pages.dev/" />
+
+    <!-- ══ Favicon ══ -->
+    <link rel="icon" type="image/webp" href="/src/assets/MoneFloLogo2.webp" />
+    <link rel="apple-touch-icon" href="/src/assets/MoneFloLogo2.webp" />
+
+    <!-- ══ Open Graph (Facebook, LinkedIn, WhatsApp) ══ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MoneFlo" />
+    <meta property="og:title" content="MoneFlo - Sistem Keuangan Organisasi Modern" />
+    <meta property="og:description" content="Platform pengelolaan keuangan organisasi berbasis web. Catat transaksi, pantau arus kas, kelola iuran anggota, dan buat laporan keuangan profesional secara real-time." />
+    <meta property="og:url" content="https://moneflo.pages.dev/" />
+    <meta property="og:image" content="https://moneflo.pages.dev/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="MoneFlo - Platform Pengelolaan Keuangan Organisasi" />
+    <meta property="og:locale" content="id_ID" />
+
+    <!-- ══ Twitter Card ══ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MoneFlo - Sistem Keuangan Organisasi Modern" />
+    <meta name="twitter:description" content="Platform pengelolaan keuangan organisasi berbasis web. Catat transaksi, pantau arus kas, dan buat laporan keuangan profesional." />
+    <meta name="twitter:image" content="https://moneflo.pages.dev/og-image.png" />
+    <meta name="twitter:image:alt" content="MoneFlo - Platform Pengelolaan Keuangan Organisasi" />
+
+    <!-- ══ Structured Data (JSON-LD) ══ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "MoneFlo",
+      "url": "https://moneflo.pages.dev",
+      "description": "Platform pengelolaan keuangan organisasi berbasis web yang modern, aman, dan mudah digunakan. Catat transaksi, pantau arus kas, kelola iuran anggota, dan buat laporan keuangan profesional.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "IDR"
+      },
+      "featureList": [
+        "Pencatatan transaksi keuangan organisasi",
+        "Laporan keuangan real-time dengan grafik interaktif",
+        "Pengelolaan iuran anggota",
+        "Ekspor laporan ke PDF",
+        "Agenda dan kegiatan organisasi",
+        "Notifikasi cerdas",
+        "Keamanan data terenkripsi",
+        "Multi-perangkat responsif"
+      ],
+      "inLanguage": "id",
+      "creator": {
+        "@type": "Organization",
+        "name": "MoneFlo",
+        "url": "https://moneflo.pages.dev"
+      }
+    }
+    </script>
+
+    <!-- ══ Preconnect & DNS Prefetch (Performance) ══ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+
+    <!-- ══ FontAwesome & Google Fonts ══ -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
     
@@ -58,6 +135,19 @@
     </script>
   </head>
   <body>
+    <!-- Noscript fallback untuk SEO crawlers yang tidak menjalankan JS -->
+    <noscript>
+      <div style="padding: 40px; text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;">
+        <h1>MoneFlo - Sistem Keuangan Organisasi</h1>
+        <p>MoneFlo adalah platform pengelolaan keuangan organisasi berbasis web yang modern, aman, dan mudah digunakan.</p>
+        <p>Fitur unggulan: Pencatatan transaksi, Laporan real-time, Pengelolaan iuran anggota, Ekspor PDF, Agenda kegiatan, Notifikasi cerdas.</p>
+        <p>Untuk menggunakan aplikasi ini, silakan aktifkan JavaScript di browser Anda.</p>
+        <ul>
+          <li><a href="/login">Masuk</a></li>
+          <li><a href="/register">Daftar Gratis</a></li>
+        </ul>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

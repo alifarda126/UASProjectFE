@@ -4,7 +4,7 @@ import { useToast } from '../../context/ToastContext';
 import OtpInput from '../../components/user/OtpInput';
 import PasswordStrengthBars from '../../components/user/PasswordStrengthBars';
 import { getPasswordStrength } from '../../utils/passwordUtils';
-import logoProject from '../../assets/MoneFloLogo.png';
+import logoProject from '../../assets/MoneFloLogo.webp';
 /* KOMPONEN UTAMA: Halaman Lupa Kata Sandi  */
 /* Menangani alur pemulihan akun melalui verifikasi email OTP */
 export default function ForgotPasswordPage({ onBackToLogin }) {

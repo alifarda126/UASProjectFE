@@ -2,7 +2,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import { getInitials } from '../../utils/formatters';
-import logoProject2 from '../../assets/MoneFloLogo2.png';
+import logoProject2 from '../../assets/MoneFloLogo2.webp';
 
 const NAV_ITEMS = [
   { page: 'beranda',    icon: 'fa-home',         label: 'Beranda',    path: '/dashboard' },

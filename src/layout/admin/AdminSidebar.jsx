@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useSystem } from '../../context/SystemContext';
-import defaultLogo2 from '../../assets/MoneFloLogo2.png';
+import defaultLogo2 from '../../assets/MoneFloLogo2.webp';
 
 /* KONSTANTA: Daftar menu navigasi untuk sidebar Admin  */
 const NAV = [

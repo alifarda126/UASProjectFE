@@ -6,7 +6,7 @@ import OtpInput from '../../components/user/OtpInput';
 import PasswordStrengthBars from '../../components/user/PasswordStrengthBars';
 import CustomSelect from '../../components/user/CustomSelect';
 import { getPasswordStrength } from '../../utils/passwordUtils';
-import logoProject from '../../assets/MoneFloLogo.png';
+import logoProject from '../../assets/MoneFloLogo.webp';
 /* KOMPONEN UTAMA: Halaman Registrasi (Daftar Organisasi Baru)  */
 /* Terdiri dari 3 langkah: Isi Data, Verifikasi OTP, dan Berhasil */
 export default function RegisterPage({ onShowLogin }) {
