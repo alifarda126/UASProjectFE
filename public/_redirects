@@ -1,2 +1,10 @@
-# SPA routing ditangani oleh public/404.html
-# File statis (robots.txt, sitemap.xml, verifikasi GSC) di-serve langsung oleh Cloudflare dari public/
+# SPA Rewrite Rules — Cloudflare Pages
+# Rute SPA di-rewrite ke index.html dengan status 200 (bukan 404)
+# Static files (robots.txt, sitemap.xml, dll) tetap di-serve langsung dari public/
+
+/login              /index.html   200
+/register           /index.html   200
+/forgot-password    /index.html   200
+/auth/*             /index.html   200
+/dashboard/*        /index.html   200
+/admin/*            /index.html   200
