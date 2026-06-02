@@ -31,7 +31,12 @@ export default function RegisterPage({ onShowLogin }) {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get('oauth') === 'true') {
-      setForm(f => ({ ...f, email: params.get('email') || '' }));
+      setForm(f => ({
+        ...f,
+        email: params.get('email') || '',
+        // Prefill nama dari Google jika tersedia (bisa diubah user)
+        name: f.name || params.get('name') || '',
+      }));
       setIsGoogleAuth(true);
     }
   }, [location.search]);
