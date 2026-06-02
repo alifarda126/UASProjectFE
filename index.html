@@ -107,38 +107,38 @@
     
     <script>
       (function() {
-        // Tunggu DOM ready sebelum mengakses body
+        // ── Background color berdasarkan role terakhir ──
         function setBackground() {
           try {
             var role = localStorage.getItem('mf_last_role');
-            // Background SOLID seperti semula
             var bg = (role === 'user') ? '#F5F5F5' : '#0A1628';
-            
-            // Cek apakah element ada sebelum mengakses style
-            if (document.documentElement) {
-              document.documentElement.style.background = bg;
-            }
-            
+            if (document.documentElement) document.documentElement.style.background = bg;
             if (document.body) {
               document.body.style.background = bg;
               document.body.style.minHeight = '100vh';
             }
-            
             var root = document.getElementById('root');
-            if (root) {
-              root.style.background = 'transparent';
-            }
+            if (root) root.style.background = 'transparent';
           } catch(e) {
-            // Silent fail - tidak mengganggu aplikasi
             console.warn('Background style initialization:', e.message);
           }
         }
-        
-        // Jalankan saat DOM sudah siap
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', setBackground);
         } else {
           setBackground();
+        }
+
+        // ── SPA Redirect Restoration ──
+        // Jika 404.html menyimpan path ke sessionStorage (fallback),
+        // restore path SEKARANG sebelum modul ES apapun dimuat.
+        // Harus di sini (bukan di main.jsx) agar berjalan sebelum BrowserRouter init.
+        var spaRedirect = sessionStorage.getItem('spa_redirect');
+        if (spaRedirect) {
+          sessionStorage.removeItem('spa_redirect');
+          try {
+            window.history.replaceState(null, '', spaRedirect);
+          } catch(e) {}
         }
       })();
     </script>
