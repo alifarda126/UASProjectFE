@@ -1,10 +1,17 @@
 # SPA Rewrite Rules — Cloudflare Pages
 # Rute SPA di-rewrite ke index.html dengan status 200 (bukan 404)
 # Static files (robots.txt, sitemap.xml, dll) tetap di-serve langsung dari public/
+# Rules dievaluasi dari atas ke bawah; catch-all /* di akhir sebagai fallback SPA.
 
 /login              /index.html   200
 /register           /index.html   200
 /forgot-password    /index.html   200
 /auth/*             /index.html   200
+/dashboard          /index.html   200
 /dashboard/*        /index.html   200
+/admin              /index.html   200
 /admin/*            /index.html   200
+
+# Catch-all fallback: semua path yang tidak punya file fisik akan serve index.html
+# sehingga React Router yang menentukan halaman (bukan server 404).
+/*                  /index.html   200
