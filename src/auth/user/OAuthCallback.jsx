@@ -36,7 +36,16 @@ export default function OAuthCallback() {
       return;
     }
 
-    // 2. Sukses — panggil fetchUser() ulang untuk baca cookie baru 
+    // 2. Akun Google belum terdaftar — arahkan ke halaman register dengan email ter-prefill
+    if (status === 'needs_register') {
+      handled.current = true;
+      const email = searchParams.get('email') || '';
+      showToast('Akun Google belum terdaftar. Silakan daftarkan organisasi Anda.', 'info');
+      navigate(`/register?oauth=true&email=${encodeURIComponent(email)}`, { replace: true });
+      return;
+    }
+
+    // 3. Sukses — panggil fetchUser() ulang untuk baca cookie baru 
     if (status === 'success') {
       handled.current = true;
 
@@ -56,7 +65,13 @@ export default function OAuthCallback() {
           navigate('/login', { replace: true });
         })
         .finally(() => {});
+      return;
     }
+
+    // 4. Fallback: status tidak dikenal atau tidak ada — redirect ke login
+    handled.current = true;
+    showToast('Terjadi kesalahan saat autentikasi Google. Silakan coba lagi.', 'error');
+    navigate('/login', { replace: true });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 

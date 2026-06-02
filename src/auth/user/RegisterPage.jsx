@@ -190,75 +190,79 @@ export default function RegisterPage({ onShowLogin }) {
                     className="input-styled w-full px-4 py-3 border border-neutral-light rounded-xl text-sm outline-none transition-all resize-none" />
                 </div>
 
-                {/* Password */}
-                <div>
-                  <label className="block text-sm font-medium text-neutral-dark mb-1.5">Kata Sandi <span className="text-red-400">*</span></label>
-                  <div className="relative">
-                    <input type={showPass ? 'text' : 'password'} placeholder="Minimal 8 karakter" value={form.pass} onChange={set('pass')}
-                      className="input-styled w-full px-4 py-3 border border-neutral-light rounded-xl text-sm outline-none transition-all pr-11" />
-                    <button type="button" onClick={() => setShowPass(!showPass)} className="btn-show-pass">
-                      <i className={`fa-regular ${showPass ? 'fa-eye-slash' : 'fa-eye'} text-sm`} />
-                    </button>
-                  </div>
-                  <PasswordStrengthBars score={getPasswordStrength(form.pass)} />
-                  
-                  {/* Password Tips Accordion */}
-                  <div className="mt-3">
-                    <button type="button" onClick={() => setShowTips(!showTips)} className="flex items-center gap-1.5 text-xs font-medium text-neutral hover:text-primary transition-colors">
-                      <i className="fas fa-exclamation-circle text-tertiary"></i> Tips kata sandi yang kuat
-                      <i className={`fas fa-chevron-${showTips ? 'up' : 'down'} ml-1 text-[10px]`}></i>
-                    </button>
+                {/* Password — hanya tampil jika bukan dari Google OAuth */}
+                {!isGoogleAuth && (
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-dark mb-1.5">Kata Sandi <span className="text-red-400">*</span></label>
+                    <div className="relative">
+                      <input type={showPass ? 'text' : 'password'} placeholder="Minimal 8 karakter" value={form.pass} onChange={set('pass')}
+                        className="input-styled w-full px-4 py-3 border border-neutral-light rounded-xl text-sm outline-none transition-all pr-11" />
+                      <button type="button" onClick={() => setShowPass(!showPass)} className="btn-show-pass">
+                        <i className={`fa-regular ${showPass ? 'fa-eye-slash' : 'fa-eye'} text-sm`} />
+                      </button>
+                    </div>
+                    <PasswordStrengthBars score={getPasswordStrength(form.pass)} />
                     
-                    {showTips && (
-                      <div className="mt-2 bg-neutral-50 border border-neutral-light/60 rounded-xl p-4 text-sm animate-fade-in">
-                        <p className="font-semibold text-primary-dark flex items-center gap-2 mb-3">
-                          <i className="fas fa-shield-alt text-primary"></i> Tips Membuat Kata Sandi yang Kuat:
-                        </p>
-                        <ul className="space-y-2 text-neutral-dark">
-                          <li className="flex items-start gap-2">
-                            <i className="fas fa-check-circle text-tertiary mt-0.5 text-xs"></i> <span>Minimal <strong>8 karakter</strong></span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <i className="fas fa-check-circle text-tertiary mt-0.5 text-xs"></i> <span>Mengandung <strong>huruf kapital</strong> (A-Z) dan <strong>huruf kecil</strong> (a-z)</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <i className="fas fa-check-circle text-tertiary mt-0.5 text-xs"></i> <span>Mengandung <strong>angka</strong> (0-9)</span>
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <i className="fas fa-check-circle text-tertiary mt-0.5 text-xs"></i> <span>Mengandung <strong>simbol/karakter khusus</strong> (@, #, $, %, !, _, -, dll)</span>
-                          </li>
-                        </ul>
-                        <hr className="my-3 border-neutral-light" />
-                        <p className="text-xs text-neutral mb-2 flex items-center gap-1.5">
-                          <i className="fas fa-lightbulb text-yellow-500"></i> Contoh kata sandi kuat:
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          <span className="bg-white px-2.5 py-1 rounded border border-neutral-light text-xs font-mono text-neutral-dark">User_12345</span>
-                          <span className="bg-white px-2.5 py-1 rounded border border-neutral-light text-xs font-mono text-neutral-dark">MoneFlo#2024</span>
-                          <span className="bg-white px-2.5 py-1 rounded border border-neutral-light text-xs font-mono text-neutral-dark">Saya@Kuat99</span>
+                    {/* Password Tips Accordion */}
+                    <div className="mt-3">
+                      <button type="button" onClick={() => setShowTips(!showTips)} className="flex items-center gap-1.5 text-xs font-medium text-neutral hover:text-primary transition-colors">
+                        <i className="fas fa-exclamation-circle text-tertiary"></i> Tips kata sandi yang kuat
+                        <i className={`fas fa-chevron-${showTips ? 'up' : 'down'} ml-1 text-[10px]`}></i>
+                      </button>
+                      
+                      {showTips && (
+                        <div className="mt-2 bg-neutral-50 border border-neutral-light/60 rounded-xl p-4 text-sm animate-fade-in">
+                          <p className="font-semibold text-primary-dark flex items-center gap-2 mb-3">
+                            <i className="fas fa-shield-alt text-primary"></i> Tips Membuat Kata Sandi yang Kuat:
+                          </p>
+                          <ul className="space-y-2 text-neutral-dark">
+                            <li className="flex items-start gap-2">
+                              <i className="fas fa-check-circle text-tertiary mt-0.5 text-xs"></i> <span>Minimal <strong>8 karakter</strong></span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <i className="fas fa-check-circle text-tertiary mt-0.5 text-xs"></i> <span>Mengandung <strong>huruf kapital</strong> (A-Z) dan <strong>huruf kecil</strong> (a-z)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <i className="fas fa-check-circle text-tertiary mt-0.5 text-xs"></i> <span>Mengandung <strong>angka</strong> (0-9)</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <i className="fas fa-check-circle text-tertiary mt-0.5 text-xs"></i> <span>Mengandung <strong>simbol/karakter khusus</strong> (@, #, $, %, !, _, -, dll)</span>
+                            </li>
+                          </ul>
+                          <hr className="my-3 border-neutral-light" />
+                          <p className="text-xs text-neutral mb-2 flex items-center gap-1.5">
+                            <i className="fas fa-lightbulb text-yellow-500"></i> Contoh kata sandi kuat:
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            <span className="bg-white px-2.5 py-1 rounded border border-neutral-light text-xs font-mono text-neutral-dark">User_12345</span>
+                            <span className="bg-white px-2.5 py-1 rounded border border-neutral-light text-xs font-mono text-neutral-dark">MoneFlo#2024</span>
+                            <span className="bg-white px-2.5 py-1 rounded border border-neutral-light text-xs font-mono text-neutral-dark">Saya@Kuat99</span>
+                          </div>
                         </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Confirm Password — hanya tampil jika bukan dari Google OAuth */}
+                {!isGoogleAuth && (
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-dark mb-1.5">Konfirmasi Kata Sandi <span className="text-red-400">*</span></label>
+                    <div className="relative">
+                      <input type={showConfirm ? 'text' : 'password'} placeholder="Ulangi kata sandi" value={form.passConfirm} onChange={set('passConfirm')}
+                        className="input-styled w-full px-4 py-3 border border-neutral-light rounded-xl text-sm outline-none transition-all pr-11" />
+                      <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="btn-show-pass">
+                        <i className={`fa-regular ${showConfirm ? 'fa-eye-slash' : 'fa-eye'} text-sm`} />
+                      </button>
+                    </div>
+                    {form.passConfirm && (
+                      <div className={`text-xs px-3 py-2 rounded-lg mt-2 ${form.pass === form.passConfirm ? 'bg-tertiary-50 text-tertiary' : 'bg-red-50 text-red-500'}`}>
+                        <i className={`fas ${form.pass === form.passConfirm ? 'fa-check-circle' : 'fa-times-circle'} mr-1`} />
+                        {form.pass === form.passConfirm ? 'Kata sandi cocok' : 'Kata sandi tidak cocok'}
                       </div>
                     )}
                   </div>
-                </div>
-
-                {/* Confirm Password */}
-                <div>
-                  <label className="block text-sm font-medium text-neutral-dark mb-1.5">Konfirmasi Kata Sandi <span className="text-red-400">*</span></label>
-                  <div className="relative">
-                    <input type={showConfirm ? 'text' : 'password'} placeholder="Ulangi kata sandi" value={form.passConfirm} onChange={set('passConfirm')}
-                      className="input-styled w-full px-4 py-3 border border-neutral-light rounded-xl text-sm outline-none transition-all pr-11" />
-                    <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="btn-show-pass">
-                      <i className={`fa-regular ${showConfirm ? 'fa-eye-slash' : 'fa-eye'} text-sm`} />
-                    </button>
-                  </div>
-                  {form.passConfirm && (
-                    <div className={`text-xs px-3 py-2 rounded-lg mt-2 ${form.pass === form.passConfirm ? 'bg-tertiary-50 text-tertiary' : 'bg-red-50 text-red-500'}`}>
-                      <i className={`fas ${form.pass === form.passConfirm ? 'fa-check-circle' : 'fa-times-circle'} mr-1`} />
-                      {form.pass === form.passConfirm ? 'Kata sandi cocok' : 'Kata sandi tidak cocok'}
-                    </div>
-                  )}
-                </div>
+                )}
 
                 <button type="button" onClick={handleRegister}
                   className="w-full py-3 bg-tertiary text-white rounded-xl font-semibold hover:bg-tertiary-light transition-colors mt-2">
