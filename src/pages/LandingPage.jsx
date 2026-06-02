@@ -113,17 +113,17 @@ export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Deteksi redirect dari Google OAuth (backend melempar ke / dengan ?oauth=true&email=...&name=...)
-  // Jika terdeteksi, langsung forward ke /register agar user bisa melengkapi data organisasi.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('oauth') === 'true') {
-      const email = params.get('email') || '';
-      const name  = params.get('name')  || '';
-      const query = new URLSearchParams({ oauth: 'true', email, name }).toString();
-      navigate(`/register?${query}`, { replace: true });
-    }
-  }, [navigate]);
+  // Cek query param OAuth SECARA SINKRON sebelum render apapun.
+  // Jika ?oauth=true ada (redirect dari backend Google), langsung navigate
+  // ke /register dan render null — sehingga landing page tidak pernah tampil.
+  const oauthParams = new URLSearchParams(window.location.search);
+  if (oauthParams.get('oauth') === 'true') {
+    const email = oauthParams.get('email') || '';
+    const name  = oauthParams.get('name')  || '';
+    const query = new URLSearchParams({ oauth: 'true', email, name }).toString();
+    navigate(`/register?${query}`, { replace: true });
+    return null;
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
