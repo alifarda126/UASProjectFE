@@ -403,6 +403,8 @@ export function AppProvider({ children }) {
         return {
           url: u,
           name: doc.name || 'Dokumen',
+          mime_type: doc.mime_type || doc.type || 'application/octet-stream',
+          size: doc.size || 0,
         };
       });
 
@@ -447,6 +449,8 @@ export function AppProvider({ children }) {
         return {
           url: u,
           name: doc.name || 'Dokumen',
+          mime_type: doc.mime_type || doc.type || 'application/octet-stream',
+          size: doc.size || 0,
         };
       });
 
