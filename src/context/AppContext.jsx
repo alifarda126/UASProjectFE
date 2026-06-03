@@ -424,6 +424,12 @@ export function AppProvider({ children }) {
       return response.data;
     } catch (error) {
       console.error("Gagal menambah transaksi:", error);
+      if (error.response?.data) {
+        console.error("Backend Validation Errors:", error.response.data);
+        if (error.response.data.errors) {
+          console.error("Detailed Errors:", JSON.stringify(error.response.data.errors, null, 2));
+        }
+      }
       throw error;
     }
   }, [organisasi?.id, fetchTransactions]);
