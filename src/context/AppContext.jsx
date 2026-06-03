@@ -390,28 +390,37 @@ export function AppProvider({ children }) {
 
   /* MANAJEMEN DATA (CRUD via API)  */
 
+
   const addTransaction = useCallback(async (txn) => {
     try {
       console.log('Adding transaction:', txn);
+
+      // Backend mengharapkan docs sebagai array of { url, name }
+      // dataUrl (base64) dikirim sebagai nilai field 'url'
+      const docs = (txn.docs || []).map((doc) => ({
+        url:  doc.dataUrl || doc.url || '',
+        name: doc.name || '',
+      }));
+
       const response = await api.post('/transaksi', {
         organisasi_id: organisasi?.id,
-        type: txn.type,
-        category: txn.cat,
-        description: txn.desc,
-        amount: Number(txn.amount),
-        date: txn.date,
-        notes: txn.note || '',
-        docs: txn.docs || [],  // Kirim docs ke backend
+        type:          txn.type,
+        category:      txn.cat,
+        description:   txn.desc,
+        amount:        Number(txn.amount),
+        date:          txn.date,
+        notes:         txn.note || '',
+        docs,
       });
-      
+
       console.log('Transaction added, response:', response.data);
-      
+
       // Refresh transaksi dari backend setelah berhasil
       await fetchTransactions();
-      
+
       // Kirim event untuk refresh data admin
       window.dispatchEvent(new CustomEvent('admin:data-changed'));
-      
+
       return response.data;
     } catch (error) {
       console.error("Gagal menambah transaksi:", error);
@@ -421,22 +430,28 @@ export function AppProvider({ children }) {
 
   const editTransaction = useCallback(async (id, data) => {
     try {
+      // Backend mengharapkan docs sebagai array of { url, name }
+      const docs = (data.docs ?? []).map((doc) => ({
+        url:  doc.dataUrl || doc.url || (typeof doc === 'string' ? doc : ''),
+        name: doc.name || '',
+      }));
+
       const response = await api.put(`/transaksi/${id}`, {
-        type: data.type,
-        category: data.cat,
+        type:        data.type,
+        category:    data.cat,
         description: data.desc,
-        amount: Number(data.amount),
-        date: data.date,
-        notes: data.note || '',
-        docs: data.docs ?? [],  // Kirim docs ke backend (termasuk array kosong jika semua dihapus)
+        amount:      Number(data.amount),
+        date:        data.date,
+        notes:       data.note || '',
+        docs,
       });
-      
+
       // Refresh transaksi dari backend setelah berhasil
       await fetchTransactions();
-      
+
       // Kirim event untuk refresh data admin
       window.dispatchEvent(new CustomEvent('admin:data-changed'));
-      
+
       return response.data;
     } catch (error) {
       console.error("Gagal mengedit transaksi:", error);
