@@ -4,15 +4,8 @@ import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';
 import Modal from '../../components/user/Modal';
 import CustomSelect from '../../components/user/CustomSelect';
+import FileDropZone from '../../components/FileDropZone';
 
-const ICON_MAP = {
-  PDF:  'fa-file-pdf text-red-400',
-  JPG:  'fa-file-image text-blue-400',
-  JPEG: 'fa-file-image text-blue-400',
-  PNG:  'fa-file-image text-emerald-400',
-  DOC:  'fa-file-word text-blue-500',
-  DOCX: 'fa-file-word text-blue-500',
-};
 
 export default function TambahTransaksiModal({ isOpen, onClose }) {
   const { addTransaction } = useApp();
@@ -30,6 +23,9 @@ export default function TambahTransaksiModal({ isOpen, onClose }) {
     return `${day}/${month}/${year}`;
   };
 
+  const fileRef       = useRef(null);
+  const datePickerRef = useRef(null);
+
   // Form states 
   const [date,         setDate]         = useState(getTodayDate());
   const [displayDate,  setDisplayDate]  = useState(formatDateForDisplay(getTodayDate()));
@@ -40,12 +36,9 @@ export default function TambahTransaksiModal({ isOpen, onClose }) {
   const [cat,          setCat]          = useState('Operasional');
   const [amount,       setAmount]       = useState('');
   const [note,         setNote]         = useState('');
-  const [files,        setFiles]        = useState([]); // { name, type, size, dataUrl }
-  const [isDrag,       setIsDrag]       = useState(false);
+  // docs: array of { url, name, size, mime_type, is_image } dari FileDropZone
+  const [docs,         setDocs]         = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const fileRef       = useRef(null);
-  const datePickerRef = useRef(null);
 
   // Reset form saat modal ditutup 
   useEffect(() => {
@@ -58,8 +51,7 @@ export default function TambahTransaksiModal({ isOpen, onClose }) {
       setCat('Operasional');
       setAmount('');
       setNote('');
-      setFiles([]);
-      setIsDrag(false);
+      setDocs([]);
       setShowDatePicker(false);
       setCurrentMonth(new Date());
       setIsSubmitting(false);
@@ -160,27 +152,6 @@ export default function TambahTransaksiModal({ isOpen, onClose }) {
     );
   };
 
-  // Proses file masuk: validasi + baca dataUrl via FileReader 
-  const processFiles = (incoming) => {
-    const maxSz   = 10 * 1024 * 1024;
-    const okTypes = ['image/jpeg','image/png','image/jpg','application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    Array.from(incoming).forEach((f) => {
-      if (!okTypes.includes(f.type)) { showToast(`Format "${f.name}" tidak didukung`, 'error'); return; }
-      if (f.size > maxSz)            { showToast(`"${f.name}" melebihi 10MB`, 'error');          return; }
-      setFiles((prev) => {
-        if (prev.some((x) => x.name === f.name && x.size === f.size)) return prev;
-        const reader = new FileReader();
-        reader.onload = (e) =>
-          setFiles((p) => p.some((x) => x.name === f.name && x.size === f.size) ? p
-            : [...p, { name: f.name, type: f.type, size: f.size, dataUrl: e.target.result }]);
-        reader.readAsDataURL(f);
-        return prev; // tidak berubah sampai reader selesai
-      });
-    });
-  };
-
-  const removeFile = (i) => setFiles((prev) => prev.filter((_, idx) => idx !== i));
-
   // Simpan transaksi via API (async dengan error handling) 
   const handleSave = async () => {
     if (!date)                          { showToast('Pilih tanggal', 'error');             return; }
@@ -196,7 +167,7 @@ export default function TambahTransaksiModal({ isOpen, onClose }) {
         cat,
         amount: Number(amount),
         note,
-        docs: files.map(({ name, type: t, dataUrl }) => ({ name, type: t, dataUrl })),
+        docs, // sudah berisi { url, name, ... } dari FileDropZone
       });
       showToast('Transaksi berhasil ditambahkan', 'success');
       onClose();
@@ -280,52 +251,15 @@ export default function TambahTransaksiModal({ isOpen, onClose }) {
             className="input-styled w-full px-4 py-2.5 border border-neutral-light rounded-xl text-sm outline-none transition-all resize-none focus:border-tertiary focus:ring-1 focus:ring-tertiary" />
         </div>
 
-        {/* Bukti Transaksi  */}
+        {/* Bukti Transaksi — pakai FileDropZone agar file diupload ke server  */}
         <div>
           <label className="block text-xs font-semibold text-neutral uppercase tracking-wider mb-1.5">Bukti Transaksi</label>
-
-          {/* Daftar file yang sudah ditambahkan */}
-          {files.length > 0 && (
-            <div className="space-y-2 mb-2">
-              {files.map((f, i) => {
-                const ext = f.name.split('.').pop().toUpperCase();
-                const sz  = f.size < 1048576 ? (f.size/1024).toFixed(1)+' KB' : (f.size/1048576).toFixed(1)+' MB';
-                const ic  = ICON_MAP[ext] || 'fa-file text-neutral-light';
-                return (
-                  <div key={i} className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
-                    <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
-                      <i className={`fas ${ic}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-neutral-dark truncate">{f.name}</p>
-                      <p className="text-[11px] text-neutral">{sz} · Baru</p>
-                    </div>
-                    <button type="button" onClick={() => removeFile(i)}
-                      className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center text-neutral-light hover:text-red-500 transition-colors flex-shrink-0">
-                      <i className="fas fa-times text-sm" />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Upload zone */}
-          <div
-            className={`upload-zone p-4 text-center cursor-pointer ${isDrag ? 'drag-over' : ''}`}
-            onClick={() => fileRef.current?.click()}
-            onDragOver={(e) => { e.preventDefault(); setIsDrag(true); }}
-            onDragLeave={() => setIsDrag(false)}
-            onDrop={(e) => { e.preventDefault(); setIsDrag(false); processFiles(e.dataTransfer.files); }}
-          >
-            <input ref={fileRef} type="file" className="hidden" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-              multiple onChange={(e) => processFiles(e.target.files)} />
-            <div className="flex flex-col items-center gap-1">
-              <i className="fas fa-cloud-upload-alt text-neutral-light text-xl mb-1" />
-              <p className="text-xs font-medium text-neutral-dark">Klik atau seret file ke sini</p>
-              <p className="text-[11px] text-neutral">JPG, PNG, PDF, DOC (Maks. 10MB)</p>
-            </div>
-          </div>
+          <FileDropZone
+            files={docs}
+            onAdd={(uploaded) => setDocs((prev) => [...prev, ...uploaded])}
+            onRemove={(i) => setDocs((prev) => prev.filter((_, idx) => idx !== i))}
+            maxFiles={5}
+          />
         </div>
       </div>
 
