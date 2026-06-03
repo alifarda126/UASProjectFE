@@ -1,5 +1,5 @@
 /* KOMPONEN MODAL: Mengubah rincian transaksi (User)  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useToast } from '../../context/ToastContext';
 import Modal from '../../components/user/Modal';
