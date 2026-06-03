@@ -396,11 +396,15 @@ export function AppProvider({ children }) {
       console.log('Adding transaction:', txn);
 
       // Backend mengharapkan docs sebagai array of { url, name }
-      // dataUrl (base64) dikirim sebagai nilai field 'url'
-      const docs = (txn.docs || []).map((doc) => ({
-        url:  doc.dataUrl || doc.url || '',
-        name: doc.name || '',
-      }));
+      // Antisipasi jika backend mereturn field dengan nama file_url, path, atau link
+      const docs = (txn.docs || []).map((doc) => {
+        let u = doc.dataUrl || doc.url || doc.file_url || doc.path || doc.link || '';
+        if (typeof doc === 'string') u = doc; // Jika doc adalah string URL
+        return {
+          url: u,
+          name: doc.name || 'Dokumen',
+        };
+      });
 
       const response = await api.post('/transaksi', {
         organisasi_id: organisasi?.id,
@@ -437,10 +441,14 @@ export function AppProvider({ children }) {
   const editTransaction = useCallback(async (id, data) => {
     try {
       // Backend mengharapkan docs sebagai array of { url, name }
-      const docs = (data.docs ?? []).map((doc) => ({
-        url:  doc.dataUrl || doc.url || (typeof doc === 'string' ? doc : ''),
-        name: doc.name || '',
-      }));
+      const docs = (data.docs ?? []).map((doc) => {
+        let u = doc.dataUrl || doc.url || doc.file_url || doc.path || doc.link || '';
+        if (typeof doc === 'string') u = doc;
+        return {
+          url: u,
+          name: doc.name || 'Dokumen',
+        };
+      });
 
       const response = await api.put(`/transaksi/${id}`, {
         type:        data.type,
