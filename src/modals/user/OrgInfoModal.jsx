@@ -69,7 +69,7 @@ export default function OrgInfoModal({ isOpen, onClose }) {
           <div className="space-y-1.5 max-h-[240px] overflow-y-auto pr-1">
             {members.map((m) => (
               <div key={m.id} className="member-row flex items-center gap-3 p-3 rounded-xl bg-white border border-neutral-light/50 shadow-sm">
-                <div className="member-avatar" style={{ background: m.color }}>
+                <div className="member-avatar" style={{ background: m.color || '#083D56' }}>
                   {getInitials(m.name)}
                 </div>
                 <div className="flex-1 min-w-0">
