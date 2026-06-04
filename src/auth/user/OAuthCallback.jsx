@@ -30,7 +30,8 @@ export default function OAuthCallback() {
       handled.current = true;
       let msg = 'Gagal login dengan Google';
       if (error === 'account_inactive') msg = 'Akun Anda telah dinonaktifkan';
-      if (errorMessage) msg += `: ${decodeURIComponent(errorMessage)}`;
+      if (error === 'manual_account') msg = 'Akun ini terdaftar secara manual. Silakan login menggunakan email dan kata sandi Anda.';
+      if (errorMessage && error !== 'manual_account') msg += `: ${decodeURIComponent(errorMessage)}`;
       showToast(msg, 'error');
       navigate('/login', { replace: true });
       return;
