@@ -2,6 +2,36 @@
 import axios from 'axios';
 
 /**
+ * Deteksi Safari browser.
+ * Safari (iOS & macOS) menerapkan ITP (Intelligent Tracking Prevention) yang memblokir
+ * cross-site httpOnly cookie meski sudah SameSite=None; Secure.
+ * Solusi: gunakan localStorage token + Authorization Bearer header sebagai fallback.
+ */
+const isSafari = () => {
+  const ua = navigator.userAgent;
+  // Safari: ada "Safari" tapi tidak ada "Chrome" atau "Chromium" (Chrome pakai engine Blink)
+  return /Safari/i.test(ua) && !/Chrome|Chromium|CriOS|FxiOS|EdgA|OPiOS/i.test(ua);
+};
+
+/** Key localStorage untuk menyimpan token fallback Safari */
+const SAFARI_TOKEN_KEY = 'mf_safari_token';
+
+/** Simpan token untuk Safari fallback */
+export const saveSafariToken = (token) => {
+  try { localStorage.setItem(SAFARI_TOKEN_KEY, token); } catch (_) {}
+};
+
+/** Hapus token Safari (saat logout) */
+export const clearSafariToken = () => {
+  try { localStorage.removeItem(SAFARI_TOKEN_KEY); } catch (_) {}
+};
+
+/** Ambil token Safari dari localStorage */
+export const getSafariToken = () => {
+  try { return localStorage.getItem(SAFARI_TOKEN_KEY); } catch (_) { return null; }
+};
+
+/**
  * Instance axios yang sudah dikonfigurasi:
  * - baseURL: URL backend dari environment variable
  * - withCredentials: true → WAJIB agar browser mengirim httpOnly cookie
@@ -21,7 +51,14 @@ const api = axios.create({
 /* REQUEST INTERCEPTOR  */
 api.interceptors.request.use(
   (config) => {
-    // Bisa tambahkan logic global sebelum request dikirim
+    // Safari ITP Fix: inject Bearer token jika browser adalah Safari
+    // dan token tersedia di localStorage (cookie diblokir oleh ITP)
+    if (isSafari()) {
+      const token = getSafariToken();
+      if (token && !config.headers['Authorization']) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
     return config;
   },
   (error) => Promise.reject(error)
@@ -42,6 +79,7 @@ api.interceptors.response.use(
       if (!window.location.pathname.includes('/login') &&
           !window.location.pathname.includes('/auth/callback')) {
         // Hapus state lokal jika ada
+        clearSafariToken(); // Bersihkan Safari token jika ada
         window.dispatchEvent(new CustomEvent('auth:unauthorized'));
       }
     }

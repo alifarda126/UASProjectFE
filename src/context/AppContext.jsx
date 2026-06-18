@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
-import api from '../utils/api';
+import api, { clearSafariToken } from '../utils/api';
 
 const TODAY = new Date();
 
@@ -280,6 +280,7 @@ export function AppProvider({ children }) {
       setState(initialState);
       localStorage.removeItem('mf_last_role');
       localStorage.removeItem('mf_org_cache');  // Hapus cache Sidebar/Topbar
+      clearSafariToken(); // Hapus token Safari fallback
 
       // Navigasi ke login setelah state bersih
       window.dispatchEvent(new CustomEvent('auth:logout'));

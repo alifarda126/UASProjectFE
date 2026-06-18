@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../context/ToastContext';
+import { saveSafariToken } from '../../utils/api';
 
 /**
  * Halaman yang menangani redirect callback dari Google OAuth.
@@ -49,6 +50,16 @@ export default function OAuthCallback() {
     // 3. Sukses — panggil fetchUser() ulang untuk baca cookie baru 
     if (status === 'success') {
       handled.current = true;
+
+      // Safari ITP Fix: backend menyertakan token di URL param _t
+      // Simpan ke localStorage agar bisa digunakan sebagai Authorization Bearer.
+      const urlToken = searchParams.get('_t');
+      if (urlToken) {
+        saveSafariToken(decodeURIComponent(urlToken));
+        // Hapus token dari URL (jangan biarkan token tampil di address bar)
+        const cleanUrl = window.location.pathname + '?status=success';
+        window.history.replaceState(null, '', cleanUrl);
+      }
 
       fetchUser()
         .then((data) => {

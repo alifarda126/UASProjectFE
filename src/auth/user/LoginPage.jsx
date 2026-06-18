@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useToast } from '../../context/ToastContext';
 import { useSystem } from '../../context/SystemContext';
 import { useAuth } from '../../hooks/useAuth';
+import { saveSafariToken } from '../../utils/api';
 import GoogleIcon from '../../components/icons/SocialIcons';
 import logoProject from '../../assets/MoneFloLogo.webp';
 
@@ -69,6 +70,12 @@ export default function LoginPage() {
         localStorage.setItem('moneflo_remembered_email', email);
       } else {
         localStorage.removeItem('moneflo_remembered_email');
+      }
+
+      // Safari ITP Fix: simpan token di localStorage agar bisa digunakan sebagai
+      // Authorization Bearer header (Safari memblokir cross-site httpOnly cookie).
+      if (response.data.token) {
+        saveSafariToken(response.data.token);
       }
 
       // Panggil fetchUser() langsung agar state auth terupdate sebelum navigate.
